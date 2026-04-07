@@ -1,0 +1,189 @@
+{
+  "url": "https://example.com",
+  "timestamp": "2026-03-21T09:00:00.000Z",
+  "http_status": 200,
+  "crawlable": true,
+  "https": true,
+  "scores": {
+    "overall_score": 78,
+    "performance": {
+      "score": 82,
+      "cwv": 75,
+      "speed": 90
+    },
+    "seo": {
+      "score": 74,
+      "technical": 90,
+      "onpage": 65,
+      "structure": 72,
+      "content": 68
+    },
+    "breakdown": {
+      "cwv_weight": 0.15,
+      "speed_weight": 0.10,
+      "technical_seo_weight": 0.20,
+      "onpage_seo_weight": 0.20,
+      "structure_weight": 0.15,
+      "content_weight": 0.20
+    }
+  },
+  "performance": {
+    "core_web_vitals": {
+      "lcp_ms": 2100,
+      "fcp_ms": 1200,
+      "cls": 0.08,
+      "inp_ms": 180,
+      "fid_ms": 22
+    },
+    "speed_metrics": {
+      "ttfb_ms": 210,
+      "speed_index_s": 1.8,
+      "tti_s": 3.2,
+      "tbt_ms": 150,
+      "performance_score": 85
+    },
+    "cdn": "cloudflare",
+    "compression": "gzip",
+    "resource_summary": {
+      "total_bytes": 1845000,
+      "script_bytes": 620000,
+      "stylesheet_bytes": 185000,
+      "image_bytes": 890000,
+      "font_bytes": 95000,
+      "other_bytes": 55000
+    }
+  },
+  "seo": {
+    "technical": {
+      "title": "Example Domain",
+      "description": "This domain is for illustrative examples in documents.",
+      "canonical": "https://example.com/",
+      "schema_count": 2,
+      "open_graph": true,
+      "twitter_card": false,
+      "indexable": true
+    },
+    "content": {
+      "word_count": 1240,
+      "h1_count": 1,
+      "headings_valid": true,
+      "images_total": 8,
+      "images_alt_missing": 1
+    },
+    "links": {
+      "internal_total": 12,
+      "external_total": 3,
+      "generic_anchor_text": 2
+    }
+  },
+  "structure": {
+    "dom_elements": 512,
+    "div_ratio": 0.38,
+    "semantic_score": 5,
+    "heading_hierarchy_valid": true
+  },
+  "issues": {
+    "critical": [],
+    "warning": [
+      "1 image(s) missing alt text: accessibility and SEO issue",
+      "Render-blocking resources detected: ~650ms potential savings"
+    ],
+    "info": [
+      "No article:published_time — search engines may not show publish date",
+      "2 image(s) missing width/height dimensions: may cause layout shifts",
+      "Only 38% of images use modern formats (WebP/AVIF)"
+    ]
+  },
+  "robots": {
+    "fetched": true,
+    "disallow_rules": ["/admin/", "/private/"],
+    "crawl_delay": null,
+    "sitemaps": ["https://example.com/sitemap.xml"],
+    "has_wildcard_disallow": false,
+    "issues": []
+  },
+  "schema_validation": {
+    "score": 85,
+    "blocks_found": 2,
+    "types": ["WebPage", "Organization"],
+    "rich_results_eligible": [],
+    "recommendations": [
+      { "priority": "low", "type": "Organization", "message": "Add 'contactPoint' for better search appearance" }
+    ]
+  },
+  "content_analysis": {
+    "score": 68,
+    "score_label": "good",
+    "depth_label": "adequate",
+    "eeat_label": "moderate",
+    "freshness_status": "current",
+    "thin_content_risk": "none",
+    "anchor_quality_score": "good",
+    "snippet_eligible": false,
+    "issues": [
+      "Low transition word usage: consider adding more connective phrases"
+    ]
+  },
+  "analysis_detail": {
+    "xray": {
+      "dom": { "total_elements": 512, "unique_tags": 28, "depth_max": 12, "depth_avg": 5.3, "deepest_path": ["body", "main", "div", "div", "div", "article", "div", "div", "p", "span", "a", "em"] },
+      "element_map": { "div": 195, "span": 62, "a": 48, "p": 38, "img": 8, "li": 24, "h2": 4, "h3": 6, "section": 3, "nav": 2 },
+      "structure": { "div_ratio": 0.38, "semantic_score": 5, "h1_count": 1, "h2_count": 4, "h3_count": 6, "heading_hierarchy_valid": true, "empty_elements": 3, "duplicate_ids": 0, "deprecated_tags": [], "inline_event_handlers": 0, "iframes": { "count": 0, "domains": [] } },
+      "head": { "charset_present": true, "viewport_present": true, "favicon_present": true, "preload_count": 2 },
+      "content_ratios": { "html_size_kb": 45.2, "word_count_approx": 1240, "html_text_ratio": 0.28 },
+      "accessibility": { "images_missing_alt": 1, "inputs_without_label": 0, "buttons_links_no_text": 0, "html_missing_lang": false, "aria_attribute_count": 8 },
+      "seo": { "meta_description_present": true, "og_tags": ["og:title", "og:description", "og:image"], "canonical_present": true, "title_non_empty": true },
+      "links": { "total": 15, "internal": 12, "external": 3, "target_blank_missing_rel": 1 },
+      "images": { "total": 8, "missing_alt": 1, "missing_dimensions": 2, "lazy_loaded": 4 },
+      "forms": { "form_count": 1, "input_count": 2, "button_count": 1, "inputs_without_labels": 0, "forms_missing_action": 0 },
+      "scripts": { "total": 5, "inline": 1, "external": 4, "defer_count": 3, "async_count": 1 },
+      "inline_styles": { "count": 2 }
+    },
+    "technical_seo": {
+      "meta": {
+        "title": { "present": true, "content": "Example Domain", "length": 14, "status": "ok" },
+        "description": { "present": true, "content": "This domain is for illustrative examples in documents.", "length": 55, "status": "ok" },
+        "robots": { "index": true, "follow": true, "content": "", "status": "ok" },
+        "charset": { "present": true },
+        "viewport": { "present": true }
+      },
+      "canonical": { "present": true, "href": "https://example.com/", "self_referencing": true, "status": "ok" },
+      "open_graph": { "title": true, "description": true, "image": true, "url": true, "published_time": null, "modified_time": null },
+      "indexability": { "blocked": false, "signals": [], "conflicts": [] },
+      "links": { "internal_total": 12, "internal_generic_anchor": 2, "external_total": 3, "external_broken": 0 },
+      "security_headers": { "present": ["x-content-type-options", "x-frame-options"], "missing": ["content-security-policy", "strict-transport-security"], "count": 2, "grade": "C" },
+      "hreflang": { "present": false, "count": 0, "languages": [], "has_x_default": false, "issues": [] },
+      "url_structure": { "length": 23, "path": "/", "has_trailing_slash": false, "has_uppercase": false, "has_special_chars": false, "has_double_slashes": false, "keyword_segments": 0, "total_segments": 0, "issues": [] }
+    },
+    "onpage": {
+      "content": { "word_count": 1240, "paragraph_count": 18, "avg_paragraph_length": 69 },
+      "headings": { "h1_count": 1, "h1_content": "Example Domain", "h2_count": 4, "h3_count": 6, "hierarchy_valid": true, "empty_headings": 0 },
+      "links": { "internal_total": 12, "internal_generic_anchor": 2, "external_total": 3, "external_broken": 0 },
+      "images": { "total": 8, "missing_alt": 1, "empty_alt_decorative": 0, "too_short": 0, "too_long": 0, "lazy_loading": 4, "modern_format": 3, "explicit_dimensions": 6, "density_per_1000_words": 6.5 },
+      "crawlability": { "status_code": 200, "redirect_count": 0, "robots_blocked": false, "sitemap_found": true, "https_enforced": true, "mixed_content": false }
+    },
+    "content_analysis": {
+      "section": "content_analysis",
+      "detected_language": "en",
+      "score": 68,
+      "score_label": "good",
+      "issues": ["Low transition word usage: consider adding more connective phrases"],
+      "content_depth": { "depth_label": "adequate", "word_count": 1240 },
+      "content_relevance": { "title_in_h1": true, "title_in_intro": true, "heading_alignment_score": 0.82, "keyword_stuffing_detected": false },
+      "eeat_signals": { "eeat_label": "moderate", "eeat_signals_count": 3 },
+      "content_freshness": { "freshness_status": "current" },
+      "thin_content": { "thin_content_risk": "none", "boilerplate_present": false, "high_repetition": false },
+      "anchor_text_quality": { "anchor_quality_score": "good", "total_internal_links": 12, "generic_count": 2 },
+      "featured_snippet": { "snippet_eligible": false },
+      "readability": { "flesch_reading_ease": 62, "reading_level": "moderate", "long_sentences_count": 2 },
+      "passive_voice": { "passive_percentage": 8.5, "passive_count": 3 },
+      "transition_words": { "transition_percentage": 12.1, "transition_label": "low" },
+      "meta_description": { "meta_description_status": "ok", "meta_description_length": 55 },
+      "top_keywords": [
+        { "word": "example", "count": 8, "density": 0.65 },
+        { "word": "domain", "count": 5, "density": 0.40 },
+        { "word": "illustrative", "count": 3, "density": 0.24 }
+      ]
+    }
+  }
+}

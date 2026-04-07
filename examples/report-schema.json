@@ -1,0 +1,342 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/stoyan-koychev/sgnl-cli/blob/main/examples/report-schema.json",
+  "title": "SGNL AnalysisReport",
+  "description": "Output schema for `sgnl analyze <url> --output json`. Contains performance, SEO, structure, content analysis, schema validation, robots.txt analysis, and full Python analysis detail.",
+  "type": "object",
+  "required": ["url", "timestamp", "http_status", "crawlable", "https", "scores", "performance", "seo", "structure", "issues"],
+  "properties": {
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "The analyzed URL."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the analysis was performed."
+    },
+    "http_status": {
+      "type": "integer",
+      "description": "HTTP response status code (e.g. 200, 301, 404)."
+    },
+    "crawlable": {
+      "type": "boolean",
+      "description": "Whether the page is crawlable (not blocked by robots, not 4xx/5xx)."
+    },
+    "https": {
+      "type": "boolean",
+      "description": "Whether the page is served over HTTPS."
+    },
+
+    "scores": {
+      "type": "object",
+      "description": "Composite scores (0-100) across all analysis dimensions.",
+      "required": ["overall_score", "performance", "seo", "breakdown"],
+      "properties": {
+        "overall_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Weighted overall score: 15% CWV + 10% Speed + 20% Technical SEO + 20% On-Page SEO + 15% Structure + 20% Content."
+        },
+        "performance": {
+          "type": "object",
+          "required": ["score", "cwv", "speed"],
+          "properties": {
+            "score": { "type": "number", "description": "Performance composite: 60% CWV + 40% Speed." },
+            "cwv": { "type": "number", "description": "Core Web Vitals sub-score (0-100)." },
+            "speed": { "type": "number", "description": "Speed metrics sub-score (0-100)." }
+          }
+        },
+        "seo": {
+          "type": "object",
+          "required": ["score", "technical", "onpage", "structure", "content"],
+          "properties": {
+            "score": { "type": "number", "description": "SEO composite: equally weighted technical + on-page + content." },
+            "technical": { "type": "number", "description": "Technical SEO sub-score (0-100)." },
+            "onpage": { "type": "number", "description": "On-page SEO sub-score (0-100)." },
+            "structure": { "type": "number", "description": "DOM structure sub-score (0-100)." },
+            "content": { "type": "number", "description": "Content analysis sub-score (0-100). From Python content_analysis.py." }
+          }
+        },
+        "breakdown": {
+          "type": "object",
+          "description": "Weight coefficients used to calculate overall_score.",
+          "properties": {
+            "cwv_weight": { "type": "number" },
+            "speed_weight": { "type": "number" },
+            "technical_seo_weight": { "type": "number" },
+            "onpage_seo_weight": { "type": "number" },
+            "structure_weight": { "type": "number" },
+            "content_weight": { "type": "number" }
+          }
+        }
+      }
+    },
+
+    "performance": {
+      "type": "object",
+      "description": "Raw performance metrics from CrUX field data, PSI lab data, and HTTP fetch.",
+      "required": ["core_web_vitals", "speed_metrics"],
+      "properties": {
+        "core_web_vitals": {
+          "type": "object",
+          "description": "Real-user field metrics (CrUX API or PSI loadingExperience). All optional — null if no field data available.",
+          "properties": {
+            "lcp_ms": { "type": "number", "description": "Largest Contentful Paint in ms. Good: <=2500, Poor: >4000." },
+            "fcp_ms": { "type": "number", "description": "First Contentful Paint in ms. Good: <=1800." },
+            "cls": { "type": "number", "description": "Cumulative Layout Shift score. Good: <=0.1, Poor: >0.25." },
+            "inp_ms": { "type": "number", "description": "Interaction to Next Paint in ms. Good: <=200, Poor: >500." },
+            "fid_ms": { "type": "number", "description": "First Input Delay in ms. Good: <=100, Poor: >300." }
+          }
+        },
+        "speed_metrics": {
+          "type": "object",
+          "description": "Speed metrics from HTTP fetch and Lighthouse lab run.",
+          "required": ["ttfb_ms"],
+          "properties": {
+            "ttfb_ms": { "type": "number", "description": "Time to First Byte in ms (measured from fetch)." },
+            "speed_index_s": { "type": "number", "description": "Speed Index in seconds (Lighthouse)." },
+            "tti_s": { "type": "number", "description": "Time to Interactive in seconds (Lighthouse)." },
+            "tbt_ms": { "type": "number", "description": "Total Blocking Time in ms (Lighthouse)." },
+            "performance_score": { "type": "number", "description": "Lighthouse performance score (0-100)." }
+          }
+        },
+        "cdn": { "type": "string", "description": "Detected CDN provider (e.g. 'cloudflare', 'cloudfront')." },
+        "compression": { "type": "string", "description": "Content encoding (e.g. 'br', 'gzip', 'deflate')." },
+        "resource_summary": {
+          "type": "object",
+          "description": "Page weight breakdown by resource type (from Lighthouse resource-summary audit).",
+          "properties": {
+            "total_bytes": { "type": "integer", "description": "Total transfer size in bytes." },
+            "script_bytes": { "type": "integer", "description": "JavaScript transfer size in bytes." },
+            "stylesheet_bytes": { "type": "integer", "description": "CSS transfer size in bytes." },
+            "image_bytes": { "type": "integer", "description": "Image transfer size in bytes." },
+            "font_bytes": { "type": "integer", "description": "Font transfer size in bytes." },
+            "other_bytes": { "type": "integer", "description": "Other resources (documents, media, etc.) in bytes." }
+          }
+        }
+      }
+    },
+
+    "seo": {
+      "type": "object",
+      "description": "SEO signals extracted from HTML and Python analysis.",
+      "required": ["technical", "content", "links"],
+      "properties": {
+        "technical": {
+          "type": "object",
+          "required": ["schema_count", "open_graph", "twitter_card", "indexable"],
+          "properties": {
+            "title": { "type": "string", "description": "Page <title> content." },
+            "description": { "type": "string", "description": "Meta description content." },
+            "canonical": { "type": "string", "description": "Canonical URL." },
+            "schema_count": { "type": "integer", "description": "Number of JSON-LD schema blocks found (from schema_validator.py)." },
+            "open_graph": { "type": "boolean", "description": "Whether Open Graph tags are present." },
+            "twitter_card": { "type": "boolean", "description": "Whether Twitter Card tags are present." },
+            "indexable": { "type": "boolean", "description": "Whether the page allows indexing (no noindex)." }
+          }
+        },
+        "content": {
+          "type": "object",
+          "required": ["word_count", "h1_count", "headings_valid", "images_total", "images_alt_missing"],
+          "properties": {
+            "word_count": { "type": "integer", "description": "Approximate word count of visible text." },
+            "h1_count": { "type": "integer", "description": "Number of <h1> tags." },
+            "headings_valid": { "type": "boolean", "description": "Whether heading hierarchy is valid (single H1, no skipped levels)." },
+            "images_total": { "type": "integer", "description": "Total <img> tags on the page." },
+            "images_alt_missing": { "type": "integer", "description": "Images missing alt attribute entirely (excludes empty alt=\"\" decorative images)." }
+          }
+        },
+        "links": {
+          "type": "object",
+          "required": ["internal_total", "external_total", "generic_anchor_text"],
+          "properties": {
+            "internal_total": { "type": "integer", "description": "Number of internal links." },
+            "external_total": { "type": "integer", "description": "Number of external links." },
+            "generic_anchor_text": { "type": "integer", "description": "Internal links with generic anchor text ('click here', 'read more', etc.)." }
+          }
+        }
+      }
+    },
+
+    "structure": {
+      "type": "object",
+      "description": "DOM structure quality metrics from xray.py.",
+      "required": ["dom_elements", "div_ratio", "semantic_score", "heading_hierarchy_valid"],
+      "properties": {
+        "dom_elements": { "type": "integer", "description": "Total DOM elements (excluding head-only tags)." },
+        "div_ratio": { "type": "number", "description": "Ratio of <div> elements to total (0-1). Lower is better." },
+        "semantic_score": { "type": "integer", "minimum": 0, "maximum": 7, "description": "Count of semantic HTML5 elements used (main, header, footer, nav, article, section, aside)." },
+        "heading_hierarchy_valid": { "type": "boolean", "description": "Whether heading hierarchy is valid." }
+      }
+    },
+
+    "issues": {
+      "type": "object",
+      "description": "Categorized issues found during analysis.",
+      "required": ["critical", "warning", "info"],
+      "properties": {
+        "critical": { "type": "array", "items": { "type": "string" }, "description": "Blocking issues: HTTP errors, not indexable, missing title, no HTTPS, TTI >10s, thin content." },
+        "warning": { "type": "array", "items": { "type": "string" }, "description": "Important issues: poor CWV, missing description, missing alt text, TBT >300ms, TTFB >600ms, no sitemap, accessibility issues, render-blocking resources." },
+        "info": { "type": "array", "items": { "type": "string" }, "description": "Informational: low word count, high div ratio, no schema, missing Permissions-Policy, missing image dimensions, inline styles, no published_time, low modern image %, empty elements." }
+      }
+    },
+
+    "robots": {
+      "type": "object",
+      "description": "Robots.txt analysis from robots_check.py. Present when robots.txt is reachable.",
+      "properties": {
+        "fetched": { "type": "boolean", "description": "Whether robots.txt was successfully fetched." },
+        "disallow_rules": { "type": "array", "items": { "type": "string" }, "description": "Disallow rules for the relevant user-agent (capped at 20)." },
+        "crawl_delay": { "type": ["number", "null"], "description": "Crawl-delay value in seconds, or null if not set." },
+        "sitemaps": { "type": "array", "items": { "type": "string" }, "description": "Sitemap URLs declared in robots.txt." },
+        "has_wildcard_disallow": { "type": "boolean", "description": "Whether a Disallow: / rule exists." },
+        "issues": { "type": "array", "items": { "type": "string" }, "description": "Robots.txt issues found." }
+      }
+    },
+
+    "schema_validation": {
+      "type": "object",
+      "description": "Schema.org JSON-LD validation from schema_validator.py. Validates blocks, checks Google Rich Results eligibility, scores markup.",
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 100, "description": "Overall schema markup score (average of per-block scores)." },
+        "blocks_found": { "type": "integer", "description": "Number of JSON-LD blocks found (including @graph items)." },
+        "types": { "type": "array", "items": { "type": "string" }, "description": "Schema.org @type values found." },
+        "rich_results_eligible": { "type": "array", "items": { "type": "string" }, "description": "Types eligible for Google Rich Results." },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+              "type": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          },
+          "description": "Actionable recommendations to improve schema markup."
+        }
+      }
+    },
+
+    "content_analysis": {
+      "type": "object",
+      "description": "Content quality analysis from Python content_analysis.py. Present when Python layer runs successfully.",
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 100, "description": "Content quality score." },
+        "score_label": { "type": "string", "enum": ["excellent", "good", "needs_work", "poor"], "description": "Human-readable score label." },
+        "depth_label": { "type": "string", "enum": ["comprehensive", "adequate", "short", "thin", "unknown"], "description": "Content depth assessment." },
+        "eeat_label": { "type": "string", "enum": ["strong", "moderate", "weak", "unknown"], "description": "E-E-A-T signal strength." },
+        "freshness_status": { "type": "string", "enum": ["current", "recent", "stale", "very_stale", "undated"], "description": "Content freshness based on date references." },
+        "thin_content_risk": { "type": "string", "enum": ["none", "low", "medium", "high", "unknown"], "description": "Risk of thin/auto-generated content." },
+        "anchor_quality_score": { "type": "string", "enum": ["excellent", "good", "fair", "poor", "unknown"], "description": "Quality of internal link anchor text." },
+        "snippet_eligible": { "type": "boolean", "description": "Whether content has concise answer blocks suitable for featured snippets." },
+        "issues": { "type": "array", "items": { "type": "string" }, "description": "Content-specific issues found." }
+      }
+    },
+
+    "analysis_detail": {
+      "type": "object",
+      "description": "Full raw output from all Python analysis scripts. Contains all data collected — much more than the summarized fields above.",
+      "properties": {
+        "xray": {
+          "type": "object",
+          "description": "Full xray.py output: DOM analysis, accessibility, SEO signals, links, images, forms, scripts, inline styles.",
+          "properties": {
+            "dom": {
+              "type": "object",
+              "properties": {
+                "total_elements": { "type": "integer" },
+                "unique_tags": { "type": "integer" },
+                "depth_max": { "type": "integer" },
+                "depth_avg": { "type": "number" },
+                "deepest_path": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "element_map": { "type": "object", "additionalProperties": { "type": "integer" } },
+            "structure": { "type": "object", "description": "Structure quality: div_ratio, semantic_score, heading counts, empty elements, duplicate IDs, deprecated tags, inline events, iframes." },
+            "head": { "type": "object", "description": "Head audit: charset_present, viewport_present, favicon_present, preload_count." },
+            "content_ratios": {
+              "type": "object",
+              "description": "Content ratios (computed from original HTML, not skeleton).",
+              "properties": {
+                "html_size_kb": { "type": "number" },
+                "word_count_approx": { "type": "integer" },
+                "html_text_ratio": { "type": "number" }
+              }
+            },
+            "accessibility": {
+              "type": "object",
+              "properties": {
+                "images_missing_alt": { "type": "integer" },
+                "inputs_without_label": { "type": "integer" },
+                "buttons_links_no_text": { "type": "integer" },
+                "html_missing_lang": { "type": "boolean" },
+                "aria_attribute_count": { "type": "integer" }
+              }
+            },
+            "seo": { "type": "object", "description": "SEO signals: meta_description_present, og_tags[], canonical_present, title_non_empty." },
+            "links": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "internal": { "type": "integer" },
+                "external": { "type": "integer" },
+                "target_blank_missing_rel": { "type": "integer" }
+              }
+            },
+            "images": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "missing_alt": { "type": "integer" },
+                "missing_dimensions": { "type": "integer" },
+                "lazy_loaded": { "type": "integer" }
+              }
+            },
+            "forms": {
+              "type": "object",
+              "properties": {
+                "form_count": { "type": "integer" },
+                "input_count": { "type": "integer" },
+                "button_count": { "type": "integer" },
+                "inputs_without_labels": { "type": "integer" },
+                "forms_missing_action": { "type": "integer" }
+              }
+            },
+            "scripts": {
+              "type": "object",
+              "description": "Script audit (computed from original HTML, not skeleton).",
+              "properties": {
+                "total": { "type": "integer" },
+                "inline": { "type": "integer" },
+                "external": { "type": "integer" },
+                "defer_count": { "type": "integer" },
+                "async_count": { "type": "integer" }
+              }
+            },
+            "inline_styles": {
+              "type": "object",
+              "properties": {
+                "count": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "technical_seo": {
+          "type": "object",
+          "description": "Full technical_seo.py output: meta tags, canonical, Open Graph, indexability, links, security headers, hreflang, pagination/AMP, URL structure."
+        },
+        "onpage": {
+          "type": "object",
+          "description": "Full onpage.py output: content metrics, heading details, link quality, image quality (alt, dimensions, modern formats, lazy loading), crawlability signals."
+        },
+        "content_analysis": {
+          "type": "object",
+          "description": "Full content_analysis.py output: readability, top_keywords, detected_language, passive_voice, transition_words, CTA, TOC, author_bio, link_density, and more."
+        }
+      }
+    }
+  }
+}
