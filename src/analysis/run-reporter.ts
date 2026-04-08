@@ -89,7 +89,7 @@ export async function saveRunReport(data: RunReportData, saveMdFiles = true, con
 }
 
 // ---------------------------------------------------------------------------
-// content.md — FireCrawl format
+// content.md — clean markdown with frontmatter
 // ---------------------------------------------------------------------------
 
 export function buildContentMd(data: RunReportData): string {
