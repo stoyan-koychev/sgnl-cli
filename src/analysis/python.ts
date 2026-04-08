@@ -1,4 +1,4 @@
-import { spawn, ChildProcess, SpawnOptions } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { resolve, join, basename } from 'path';
 import * as fs from 'fs';
 import { SgnlError } from '../errors';
@@ -155,7 +155,7 @@ export async function runPythonScript(scriptName: string, input: string, timeout
       const scriptArgs = argv1 !== undefined ? [scriptPath, argv1] : [scriptPath];
       proc = spawn(effectivePythonPath, scriptArgs, options);
       trackProcess(proc);
-    } catch (err) {
+    } catch {
       reject(new PythonNotInstalledError());
       return;
     }
@@ -221,7 +221,7 @@ export async function runPythonScript(scriptName: string, input: string, timeout
 
         JSON.parse(trimmedOutput);
         resolve(trimmedOutput);
-      } catch (err) {
+      } catch {
         reject(new JSONParseError(`Invalid JSON output: ${stdout.substring(0, 100)}`));
       }
     });

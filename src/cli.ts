@@ -34,6 +34,7 @@ for (const file of fs.readdirSync(commandsDir)) {
   if (!file.endsWith('.js')) continue;       // skip non-compiled files
   if (file === 'helpers.js') continue;       // skip shared utilities
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require(path.join(commandsDir, file));
     const registerFn = Object.values(mod).find(
       (v): v is (p: Command) => void => typeof v === 'function' && v.name.startsWith('register'),

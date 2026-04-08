@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Box, Text, render, Newline } from 'ink';
+import { Box, Text, render } from 'ink';
 import { AnalysisReport } from '../analysis/merger';
 
 // ─────────────────────────────────────────────────────────────────────────────

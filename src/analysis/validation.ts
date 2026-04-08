@@ -97,7 +97,7 @@ export function validateUrl(url: string, maxLength: number = 2048): string {
   // IPv4 address check
   const ipv4Match = hostname.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
   if (ipv4Match) {
-    const [_, oct1, oct2, oct3, oct4] = ipv4Match.map(Number);
+    const [, oct1, oct2] = ipv4Match.map(Number);
 
     // 127.x.x.x (loopback)
     if (oct1 === 127) {

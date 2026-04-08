@@ -978,7 +978,7 @@ function renderTreeNode(node: TreeNode, prefix: string, isLast: boolean): string
 
 function renderTree(nodes: TreeNode[]): string {
   const lines: string[] = [];
-  nodes.forEach((node, i) => {
+  nodes.forEach((node) => {
     // Top-level nodes: show directly
     lines.push(`H${node.level}: ${node.text || '(empty)'}`);
     const children = node.children ?? [];

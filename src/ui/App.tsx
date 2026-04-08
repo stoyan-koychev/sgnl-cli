@@ -21,7 +21,7 @@ export const App: React.FC<AppProps> = ({ url, flags }) => {
     if (analysisState.overall === 'done' || analysisState.overall === 'error') {
       setTimeout(() => exit(), 100);
     }
-  }, [analysisState.overall]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [analysisState.overall, exit]);
 
   const completedSteps = analysisState.steps.filter(
     s => s.status === 'done' || s.status === 'error'

@@ -20,7 +20,7 @@ export function detectCommunities(
       try {
         const parts = new URL(n.id).pathname.split('/').filter(Boolean);
         seg = parts.length > 0 ? parts[0] : 'root';
-      } catch (_) { /* keep seg = 'other' */ }
+      } catch { /* keep seg = 'other' */ }
     }
     if (!segMap.has(seg)) segMap.set(seg, nextId++);
     communities.set(n.id, segMap.get(seg)!);
