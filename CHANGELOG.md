@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- [#2](https://github.com/stoyan-koychev/sgnl-cli/pull/2) [`fb278da`](https://github.com/stoyan-koychev/sgnl-cli/commit/fb278da2e6d8118f9f209b0c83303d4cbf59a417) Thanks [@stoyan-koychev](https://github.com/stoyan-koychev)! - Improve content extraction with expanded HTML cleanup (42+ non-content selectors), URL absolutization, skip-to-content link removal, and better whitespace handling
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -8,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] — 2026-04-07
 
 ### Analysis Commands
+
 - `sgnl analyze <url>` — full pipeline combining HTTP fetch, Python HTML analysis,
   PageSpeed Insights, Chrome UX Report, and optional GSC data. Supports `--follow`
   for multi-page crawling, `--stream` for incremental JSON, `--save` for Markdown
@@ -30,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   blocking summary, wildcard detection, sitemap discovery, and syntax validation.
 
 ### Explorer
+
 - `sgnl explorer crawl <url>` — site-wide crawler producing a compressed link graph
   with pre-computed PageRank, community detection (content clusters), and optional
   GSC ranking data overlay. Supports Googlebot simulation, sitemap seeding,
@@ -38,23 +46,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `cluster` / `depth-map` / `external` / `unranked` — query commands for crawl data.
 
 ### Google Search Console
+
 - `sgnl gsc login` / `logout` / `status` — OAuth2 authentication with
   auto-discovery of verified properties.
 - `sgnl gsc pages` / `queries` / `url` / `inspect` / `sitemaps` — GSC data
   commands with period comparison, country/device filters, and CSV export.
 
 ### Setup & Configuration
+
 - `sgnl init` — interactive setup wizard for API keys and output path.
 - Configuration in `~/.sgnl/config.json` with env var overrides
   (`SGNL_PSI_KEY`, `SGNL_DEBUG`).
 - Automatic Python dependency setup on install via postinstall script.
 
 ### Library API
+
 - Programmatic exports: `buildReport`, `buildReportStream`, `resolveConfig`,
   `safeFetch`, `callPSI`, `mergeAnalysis`, `Explorer`, `buildCompactData`,
   `findLatestRun`, `loadRun`, and all associated types.
 
 ### AI Agent Skills
+
 - `skills/sgnl/SKILL.md` — entry point with compact CLI reference and skill router.
 - `ai-seo-audit` — 7-step AI-era SEO audit (keyword placement, AI citation
   readiness, search intent, topical coverage, AI-readiness structure, authority
@@ -65,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `sgnl-cli-guide` — comprehensive CLI operating guide for AI agents.
 
 ### Custom HTTP Headers
+
 - `sgnl headers set/list/remove/clear` — manage persistent custom HTTP headers
   (global or per-domain) stored in `~/.sgnl/config.json`.
 - `-H "Name: Value"` flag on `analyze`, `technical`, `content`, `structure`,
@@ -75,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config file permissions set to `0600` on save for security.
 
 ### Infrastructure
+
 - Switched package manager from npm to pnpm.
 - 428+ tests across unit and integration suites.
 - Python analysis layer (DOM X-ray, on-page SEO, content extraction, schema validation).
