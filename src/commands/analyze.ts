@@ -7,7 +7,7 @@ import { buildReport, buildReportStream } from '../analysis/orchestrator';
 import { crawlSite, formatTreeAsAscii } from '../analysis/link-crawler';
 import { isValidUrl, parseHeaderFlags, buildFetchHeaders } from './helpers';
 import { resolveConfig } from '../config';
-import { SgnlError, formatErrorForUser } from '../errors';
+import { formatErrorForUser } from '../errors';
 
 export function registerAnalyzeCommand(program: Command): void {
   program

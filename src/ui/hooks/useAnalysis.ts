@@ -105,7 +105,7 @@ export function useAnalysis(url: string, flags: AnalysisFlags): AnalysisState {
         setState(prev => ({ ...prev, overall: 'error' }));
       }
     })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return state;
 }

@@ -7,7 +7,7 @@ import { safeFetch } from './fetch';
 import { callPSI, PSIResult, FieldData } from './psi';
 import { fetchCrUXData } from './crux';
 import { fetchGSCData, GSCData } from './gsc';
-import { runPythonScriptSafe, PythonNotInstalledError } from './python';
+import { runPythonScriptSafe } from './python';
 import { DOMAnalysis, TechnicalSEO, OnPageSEO, ContentAnalysis } from './scoring';
 import { mergeAnalysis, AnalysisReport, PythonAnalysis } from './merger';
 import { saveRunReport } from './run-reporter';
@@ -1157,8 +1157,6 @@ export async function* buildReportStream(url: string, options: BuildReportOption
 
   // ── Create complete report (with Google metrics) ─────────────────────────
   // Prefer CrUX field data (direct API), fall back to PSI's loadingExperience
-  const finalFieldData = cruxFieldData ?? psiResults[0]?.field_data ?? null;
-
   const tPerfFinal = Date.now();
   emit('performance', 'running', { startedAt: tPerfFinal });
   emit('performance', 'done', { duration_ms: Date.now() - tPerfFinal });
