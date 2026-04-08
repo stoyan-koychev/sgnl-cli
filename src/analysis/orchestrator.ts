@@ -876,7 +876,7 @@ async function runPythonPipeline(
   emit?.('split', 'running', { startedAt: tSplit });
   emit?.('technical_seo', 'running', { startedAt: tTech });
   const [splitSettled, techSeoSettled, robotsCheckSettled, schemaSettled] = await Promise.allSettled([
-    runPythonScriptSafe('split.py', html, timeout, undefined, pythonPath),
+    runPythonScriptSafe('split.py', html, timeout, url, pythonPath),
     runPythonScriptSafe('technical_seo.py', JSON.stringify({ html, headers, url }), timeout, undefined, pythonPath),
     url
       ? runPythonScriptSafe('robots_check.py', JSON.stringify({ url, meta_robots_blocked: false, timeout_ms: timeout, headers: customRequestHeaders ?? {} }), timeout, undefined, pythonPath)

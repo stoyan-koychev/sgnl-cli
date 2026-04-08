@@ -31,7 +31,7 @@ export async function runPageStats(
     await Promise.all(batch.map(async ([url, page]) => {
       try {
         const html = page.rawHtml!;
-        const splitRes = await runPythonScriptSafe('split.py', html);
+        const splitRes = await runPythonScriptSafe('split.py', html, 30000, url);
         if (!splitRes.success) return;
         const { markdown, skeleton } = splitRes.data as { markdown: string; skeleton: string };
 

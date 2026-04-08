@@ -37,7 +37,7 @@ export async function saveDebugRun(data: DebugRunData): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// content.md — FireCrawl format
+// content.md — clean markdown with frontmatter
 // ---------------------------------------------------------------------------
 
 function buildContentMd(data: DebugRunData): string {

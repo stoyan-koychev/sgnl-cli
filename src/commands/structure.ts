@@ -319,7 +319,7 @@ export function registerStructureCommand(program: Command): void {
 
         // Step 1: split.py to get skeleton + markdown
         logger.info('Extracting structure...');
-        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, parseInt(options.timeout, 10));
+        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, parseInt(options.timeout, 10), url);
         const skeleton = splitResult.data?.skeleton ?? '';
         const markdown = splitResult.data?.markdown ?? '';
 

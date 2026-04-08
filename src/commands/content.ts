@@ -362,7 +362,7 @@ export function registerContentCommand(program: Command): void {
 
         // Step 1: split.py → markdown
         logger.info('Extracting content...');
-        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, timeout);
+        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, timeout, url);
         const markdown: string = splitResult.data?.markdown ?? '';
 
         if (!markdown) {
