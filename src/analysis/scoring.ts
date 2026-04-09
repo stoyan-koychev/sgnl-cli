@@ -86,7 +86,6 @@ export interface TechnicalSEO {
   title_present: boolean;
   description_present: boolean;
   canonical_present: boolean;
-  schema_blocks: number;
   open_graph_present?: boolean;
   is_indexable?: boolean;
   twitter_card_present?: boolean;

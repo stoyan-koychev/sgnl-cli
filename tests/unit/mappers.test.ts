@@ -239,7 +239,6 @@ describe('mapTechSeoToTechnicalSEO', () => {
     expect(r.title_present).toBe(true);
     expect(r.description_present).toBe(true);
     expect(r.canonical_present).toBe(true);
-    expect(r.schema_blocks).toBe(0); // populated later from schema_validator
     expect(r.open_graph_present).toBe(true);
     expect(r.is_indexable).toBe(true);
     expect(r.twitter_card_present).toBe(true);

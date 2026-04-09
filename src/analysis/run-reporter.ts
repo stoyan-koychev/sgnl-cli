@@ -710,27 +710,6 @@ export function buildTechSeoMd(data: RunReportData): string {
   if (og.updated_time) lines.push(`| og:updated_time | ${og.updated_time} |`);
   lines.push('');
 
-  // Schema
-  lines.push('## JSON-LD Schema', '');
-  lines.push(`Blocks found: **${t.schema?.blocks_found ?? 0}**`, '');
-  if (t.schema?.types?.length) {
-    lines.push('| Type |');
-    lines.push('|------|');
-    for (const type of t.schema.types) {
-      lines.push(`| ${type} |`);
-    }
-    lines.push('');
-  }
-  if (t.schema?.errors?.length) {
-    lines.push('**Errors:**', '');
-    lines.push('| Error |');
-    lines.push('|-------|');
-    for (const err of t.schema.errors) {
-      lines.push(`| ${err} |`);
-    }
-    lines.push('');
-  }
-
   // Indexability
   lines.push('## Indexability', '');
   lines.push('| Field | Value |');

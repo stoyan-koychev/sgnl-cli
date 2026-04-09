@@ -75,7 +75,6 @@ function mockTechnicalSEO(overrides: Partial<TechnicalSEO> = {}): TechnicalSEO {
     title_present: true,
     description_present: true,
     canonical_present: true,
-    schema_blocks: 2,
     open_graph_present: true,
     is_indexable: true,
     ...overrides,

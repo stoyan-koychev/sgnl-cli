@@ -528,7 +528,7 @@ function generateIssues(
     info.push('No canonical tag: consider adding one to avoid duplicate content issues');
   }
 
-  if (tech && tech.schema_blocks === 0) {
+  if ((rawPythonData?.schemaValidation?.blocks_found ?? 0) === 0) {
     info.push('No structured data (JSON-LD): adding schema markup can enhance search appearance');
   }
 
@@ -702,7 +702,7 @@ export function mergeAnalysis(
   void _tTitle; void _tDesc; void _tCanon; void _tOg;
   const seoTechnical: AnalysisReport['seo']['technical'] = {
     ...techRest,
-    schema_count: rawPythonData?.schemaValidation?.blocks_found ?? tech?.schema_blocks ?? 0,
+    schema_count: rawPythonData?.schemaValidation?.blocks_found ?? 0,
     open_graph: tech?.open_graph_present ?? false,
     twitter_card: tech?.twitter_card_present ?? false,
     indexable: tech?.is_indexable !== false, // default to true unless explicitly false
