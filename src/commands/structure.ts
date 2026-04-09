@@ -272,14 +272,6 @@ function printStructureTerminal(
     console.log(`  Duplicate headings: ${dupHeadings.slice(0, 5).join(' | ')}`);
   }
 
-  // Crawlability (onpage)
-  const crawl = o.crawlability ?? {};
-  if (Object.keys(crawl).length > 0) {
-    console.log('');
-    console.log('  Crawlability');
-    console.log(`    Status: ${n(crawl.status_code)}  |  Redirects: ${n(crawl.redirect_count)}  |  Robots blocked: ${crawl.robots_blocked ? 'yes' : 'no'}`);
-    console.log(`    Sitemap: ${crawl.sitemap_found ? 'found' : 'not found'}  |  HTTPS: ${crawl.https_enforced ? 'enforced' : 'no'}  |  Mixed content: ${crawl.mixed_content ? 'yes' : 'no'}`);
-  }
 
   console.log('');
 }

@@ -75,7 +75,6 @@ function mockTechnicalSEO(overrides: Partial<TechnicalSEO> = {}): TechnicalSEO {
     title_present: true,
     description_present: true,
     canonical_present: true,
-    schema_blocks: 2,
     open_graph_present: true,
     is_indexable: true,
     ...overrides,
@@ -88,9 +87,7 @@ function mockOnPageSEO(overrides: Partial<OnPageSEO> = {}): OnPageSEO {
     content_word_count: 500,
     image_alt_missing: 1,
     internal_links: 8,
-    https_enforced: true,
     heading_hierarchy_valid: true,
-    has_sitemap: true,
     has_robots: true,
     ...overrides,
   };

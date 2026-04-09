@@ -276,7 +276,6 @@
                 "aria_attribute_count": { "type": "integer" }
               }
             },
-            "seo": { "type": "object", "description": "SEO signals: meta_description_present, og_tags[], canonical_present, title_non_empty." },
             "links": {
               "type": "object",
               "properties": {
@@ -330,7 +329,7 @@
         },
         "onpage": {
           "type": "object",
-          "description": "Full onpage.py output: content metrics, heading details, link quality, image quality (alt, dimensions, modern formats, lazy loading), crawlability signals."
+          "description": "Full onpage.py output: content metrics, heading details, link quality, image quality (alt, dimensions, modern formats, lazy loading)."
         },
         "content_analysis": {
           "type": "object",

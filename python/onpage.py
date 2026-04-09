@@ -8,7 +8,6 @@ Analyzes markdown content for on-page SEO factors:
 - Content analysis (word count, paragraphs)
 - Keyword signals
 - Image alt text
-- Crawlability
 """
 
 import sys
@@ -49,15 +48,11 @@ def analyze_onpage(markdown: str, html: str = "", headers: Optional[Dict[str, st
         else:
             images['density_per_1000_words'] = 0.0
 
-        # Crawlability
-        crawlability = _analyze_crawlability(headers)
-
         return {
             "content": content,
             "headings": headings,
             "links": links,
             "images": images,
-            "crawlability": crawlability
         }
     except Exception as e:
         sys.stderr.write(f"Error analyzing on-page SEO: {e}\n")
@@ -308,24 +303,6 @@ def _analyze_images(soup: BeautifulSoup) -> Dict[str, Any]:
     }
 
 
-def _analyze_crawlability(headers: Dict[str, str]) -> Dict[str, Any]:
-    """Analyze crawlability factors."""
-    status_code = int(headers.get('status_code', 200))
-    redirect_count = int(headers.get('redirect_count', 0))
-    robots_blocked = headers.get('robots_blocked', 'false').lower() == 'true'
-    sitemap_found = headers.get('sitemap_found', 'false').lower() == 'true'
-    https_enforced = headers.get('https', 'true').lower() == 'true'
-    mixed_content = headers.get('mixed_content', 'false').lower() == 'true'
-    
-    return {
-        'status_code': status_code,
-        'redirect_count': redirect_count,
-        'robots_blocked': robots_blocked,
-        'sitemap_found': sitemap_found,
-        'https_enforced': https_enforced,
-        'mixed_content': mixed_content
-    }
-
 
 def main() -> None:
     """
@@ -350,7 +327,6 @@ def main() -> None:
                 "headings": {},
                 "links": {},
                 "images": {},
-                "crawlability": {}
             }
         else:
             result = analyze_onpage(markdown, html, headers)

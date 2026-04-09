@@ -72,7 +72,7 @@ function buildXrayMd(data: DebugRunData): string {
   const head = x.head ?? {};
   const elementMap: Record<string, number> = x.element_map ?? {};
 
-  const lines: string[] = [`# DOM X-Ray: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# X-Ray`, '', `> URL: ${data.url}`, ''];
 
   // DOM Overview
   lines.push('## DOM Overview', '');
@@ -139,17 +139,7 @@ function buildXrayMd(data: DebugRunData): string {
 
 function buildMetadataMd(data: DebugRunData): string {
   const t = data.rawTechSeo;
-  const lines: string[] = [`# Metadata: ${new URL(data.url).hostname}`, ''];
-
-  // Response info
-  lines.push('## HTTP Response', '');
-  lines.push('| Field | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Status | ${data.statusCode} |`);
-  if (data.ttfb_ms != null) lines.push(`| TTFB | ${data.ttfb_ms} ms |`);
-  if (data.compression) lines.push(`| Compression | ${data.compression} |`);
-  if (data.cdnDetected) lines.push(`| CDN | ${data.cdnDetected} |`);
-  lines.push('');
+  const lines: string[] = [`# Metadata`, '', `> URL: ${data.url}`, ''];
 
   // Response headers
   const headerEntries = Object.entries(data.headers);
@@ -180,7 +170,7 @@ function buildMetadataMd(data: DebugRunData): string {
 
   // Open Graph
   const og = t.open_graph ?? {};
-  const ogEntries = Object.entries(og).filter(([, v]) => v);
+  const ogEntries = Object.entries(og).filter(([, v]) => v && typeof v !== 'object');
   if (ogEntries.length > 0) {
     lines.push('## Open Graph', '');
     lines.push('| Property | Value |');
@@ -189,13 +179,6 @@ function buildMetadataMd(data: DebugRunData): string {
       lines.push(`| og:${k} | ${v} |`);
     }
     lines.push('');
-  }
-
-  // Schema
-  lines.push('## Schema.org', '');
-  lines.push(`JSON-LD blocks found: **${t.schema?.blocks_found ?? 0}**`, '');
-  if (t.schema?.types?.length) {
-    lines.push(`Types: ${t.schema.types.join(', ')}`, '');
   }
 
   // Indexability
@@ -273,15 +256,14 @@ function parseAssets(html: string): {
 
 function buildOnpageMd(data: DebugRunData): string {
   const o = data.rawOnpage;
-  if (!o) return `# On-Page SEO: ${new URL(data.url).hostname}\n\n_No onpage data available._\n`;
+  if (!o) return `# On-Page SEO\n\n> URL: ${data.url}\n\n_No onpage data available._\n`;
 
   const content = o.content ?? {};
   const headings = o.headings ?? {};
   const links = o.links ?? {};
   const images = o.images ?? {};
-  const crawlability = o.crawlability ?? {};
 
-  const lines: string[] = [`# On-Page SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# On-Page SEO`, '', `> URL: ${data.url}`, ''];
 
   // Content
   lines.push('## Content', '');
@@ -329,17 +311,6 @@ function buildOnpageMd(data: DebugRunData): string {
   lines.push(`| Alt Too Long (>125 chars) | ${images.too_long ?? 'n/a'} |`);
   lines.push('');
 
-  // Crawlability
-  lines.push('## Crawlability', '');
-  lines.push('| Check | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Status Code | ${crawlability.status_code ?? 'n/a'} |`);
-  lines.push(`| Redirects | ${crawlability.redirect_count ?? 0} |`);
-  lines.push(`| Robots Blocked | ${crawlability.robots_blocked ? 'yes' : 'no'} |`);
-  lines.push(`| Sitemap Found | ${crawlability.sitemap_found ? 'yes' : 'no'} |`);
-  lines.push(`| HTTPS Enforced | ${crawlability.https_enforced ? 'yes' : 'no'} |`);
-  lines.push(`| Mixed Content | ${crawlability.mixed_content ? 'yes' : 'no'} |`);
-  lines.push('');
 
   return lines.join('\n');
 }
@@ -350,9 +321,9 @@ function buildOnpageMd(data: DebugRunData): string {
 
 function buildTechSeoMd(data: DebugRunData): string {
   const t = data.rawTechSeo;
-  if (!t) return `# Technical SEO: ${new URL(data.url).hostname}\n\n_No technical SEO data available._\n`;
+  if (!t) return `# Technical SEO\n\n> URL: ${data.url}\n\n_No technical SEO data available._\n`;
 
-  const lines: string[] = [`# Technical SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Technical SEO`, '', `> URL: ${data.url}`, ''];
 
   // Meta Tags
   lines.push('## Meta Tags', '');
@@ -395,27 +366,6 @@ function buildTechSeoMd(data: DebugRunData): string {
   }
   lines.push('');
 
-  // Schema
-  lines.push('## JSON-LD Schema', '');
-  lines.push(`Blocks found: **${t.schema?.blocks_found ?? 0}**`, '');
-  if (t.schema?.types?.length) {
-    lines.push('| Type |');
-    lines.push('|------|');
-    for (const type of t.schema.types) {
-      lines.push(`| ${type} |`);
-    }
-    lines.push('');
-  }
-  if (t.schema?.errors?.length) {
-    lines.push('**Errors:**', '');
-    lines.push('| Error |');
-    lines.push('|-------|');
-    for (const err of t.schema.errors) {
-      lines.push(`| ${err} |`);
-    }
-    lines.push('');
-  }
-
   // Indexability
   lines.push('## Indexability', '');
   lines.push('| Field | Value |');
@@ -445,7 +395,7 @@ function buildTechSeoMd(data: DebugRunData): string {
 }
 
 function buildAssetsMd(data: DebugRunData): string {
-  const lines: string[] = [`# Assets: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Assets`, '', `> URL: ${data.url}`, ''];
   const { images, externalScripts, inlineScripts, stylesheets, preloads } = parseAssets(data.html);
 
   // Images

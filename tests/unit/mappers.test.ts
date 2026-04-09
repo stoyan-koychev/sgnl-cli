@@ -239,7 +239,6 @@ describe('mapTechSeoToTechnicalSEO', () => {
     expect(r.title_present).toBe(true);
     expect(r.description_present).toBe(true);
     expect(r.canonical_present).toBe(true);
-    expect(r.schema_blocks).toBe(0); // populated later from schema_validator
     expect(r.open_graph_present).toBe(true);
     expect(r.is_indexable).toBe(true);
     expect(r.twitter_card_present).toBe(true);
@@ -309,21 +308,15 @@ describe('mapOnpageToOnPageSEO', () => {
       poor_quality_alt: 1, lazy_loading: 8, modern_format: 6, explicit_dimensions: 10,
       density_per_1000_words: 10,
     },
-    crawlability: {
-      status_code: 200, redirect_count: 0, robots_blocked: false, sitemap_found: true,
-      https_enforced: true, mixed_content: false,
-    },
   };
 
-  it('preserves the original 7 fields exactly', () => {
+  it('preserves the original core fields exactly', () => {
     const r = mapOnpageToOnPageSEO(onpageFixture)!;
     expect(r.h1_count).toBe(1);
     expect(r.content_word_count).toBe(1200);
     expect(r.image_alt_missing).toBe(2);
     expect(r.internal_links).toBe(22);
-    expect(r.https_enforced).toBe(true);
     expect(r.heading_hierarchy_valid).toBe(false);
-    expect(r.has_sitemap).toBe(true);
   });
 
   it('populates heading counts, tree, and violations', () => {
@@ -338,13 +331,12 @@ describe('mapOnpageToOnPageSEO', () => {
     expect(r.heading_issues).toEqual(['heading-skip']);
   });
 
-  it('populates content, links_detail, images_detail, crawlability', () => {
+  it('populates content, links_detail, images_detail', () => {
     const r = mapOnpageToOnPageSEO(onpageFixture)!;
     expect(r.content?.paragraph_count).toBe(22);
     expect(r.links_detail?.external_broken).toBe(1);
     expect(r.images_detail?.modern_format).toBe(6);
     expect(r.images_detail?.density_per_1000_words).toBe(10);
-    expect(r.crawlability?.status_code).toBe(200);
   });
 
   it('maps table_of_contents_detected flag from headings', () => {

@@ -162,7 +162,6 @@ const fullReport: AnalysisReport = {
       },
       links: { internal_total: 28, external_total: 5, external_broken: 0, internal_generic_anchor: 3 },
       images: { total: 12, missing_alt: 2, empty_alt_decorative: 1, too_short: 1, too_long: 0, poor_quality_alt: 0, lazy_loading: 8, modern_format: 9, explicit_dimensions: 10, density_per_1000_words: 9.7 },
-      crawlability: { status_code: 200, redirect_count: 1, robots_blocked: false, sitemap_found: true, https_enforced: true, mixed_content: false },
     },
     content_analysis: {
       content_depth: { word_count: 1240, paragraph_count: 18 },
@@ -473,13 +472,6 @@ describe('buildReportMd', () => {
     expect(output).toContain('Empty alt (decorative)');
     expect(output).toContain('Alt too long');
     expect(output).toContain('Poor quality alt');
-  });
-
-  test('Crawlability Detail from onpage', () => {
-    expect(output).toContain('### Crawlability Detail');
-    expect(output).toContain('Sitemap found');
-    expect(output).toContain('HTTPS enforced');
-    expect(output).toContain('Mixed content');
   });
 
   test('Content Analysis section with all signals', () => {

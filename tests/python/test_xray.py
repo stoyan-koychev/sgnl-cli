@@ -375,74 +375,6 @@ class TestAccessibility:
         assert result['accessibility']['aria_attribute_count'] == 3
 
 
-class TestSEOAudit:
-    """Test SEO audit."""
-
-    def test_meta_description_present(self):
-        """Test meta description detection."""
-        html = '<head><meta name="description" content="A page about testing"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['meta_description_present'] == True
-
-    def test_meta_description_missing(self):
-        """Test missing meta description."""
-        html = '<head><meta charset="utf-8"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['meta_description_present'] == False
-
-    def test_og_tags_found(self):
-        """Test Open Graph tag detection."""
-        html = '<head><meta property="og:title" content="Title"><meta property="og:description" content="Desc"></head>'
-        result = analyze_dom(html)
-
-        og = result['seo']['og_tags']
-        assert 'og:title' in og
-        assert 'og:description' in og
-
-    def test_og_tags_empty_when_none(self):
-        """Test no OG tags returns empty list."""
-        html = '<head><meta charset="utf-8"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['og_tags'] == []
-
-    def test_canonical_present(self):
-        """Test canonical link detection."""
-        html = '<head><link rel="canonical" href="https://example.com/page"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['canonical_present'] == True
-
-    def test_canonical_missing(self):
-        """Test missing canonical link."""
-        html = '<head><link rel="stylesheet" href="style.css"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['canonical_present'] == False
-
-    def test_title_non_empty(self):
-        """Test non-empty title detection."""
-        html = '<head><title>My Page</title></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['title_non_empty'] == True
-
-    def test_title_empty(self):
-        """Test empty title detection."""
-        html = '<head><title></title></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['title_non_empty'] == False
-
-    def test_title_missing(self):
-        """Test missing title tag."""
-        html = '<head><meta charset="utf-8"></head>'
-        result = analyze_dom(html)
-
-        assert result['seo']['title_non_empty'] == False
-
 
 class TestLinksAudit:
     """Test links audit."""
@@ -676,7 +608,6 @@ class TestXrayIntegration:
         assert 'head' in result
         assert 'content_ratios' in result
         assert 'accessibility' in result
-        assert 'seo' in result
         assert 'links' in result
         assert 'images' in result
         assert 'forms' in result
@@ -685,9 +616,6 @@ class TestXrayIntegration:
 
         assert result['dom']['total_elements'] > 0
         assert 'deepest_path' in result['dom']
-        assert result['seo']['meta_description_present'] == True
-        assert result['seo']['canonical_present'] == True
-        assert result['seo']['title_non_empty'] == True
         assert result['accessibility']['html_missing_lang'] == False
 
     def test_valid_json_output(self):

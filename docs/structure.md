@@ -87,7 +87,7 @@ Python 3.8+ with `beautifulsoup4` installed. Without Python, the command fails i
         │
         ▼
   python/xray.py  ────┐          python/onpage.py  (in parallel)
-  (DOM structure)     │          (headings, content, links, images, crawlability)
+  (DOM structure)     │          (headings, content, links, images)
                       ▼
               { request, structure: { xray, onpage } }
                       │
@@ -251,19 +251,6 @@ Source: `xray.py → scripts` and nested `scripts.third_party`.
 | `third_party.categories` | object | `{ analytics, ads, cdn, social, other }` → domain[] |
 | `third_party.tag_manager_detected` | bool | Google Tag Manager, Tealium, Adobe DTM, OneTrust |
 
-### Crawlability
-
-Source: `onpage.py → crawlability`. Some overlap with `sgnl technical`, but the structure command renders what it has.
-
-| Field | Type | Notes |
-|---|---|---|
-| `status_code` | int | From input headers |
-| `redirect_count` | int | From input headers |
-| `robots_blocked` | bool | From input headers |
-| `sitemap_found` | bool | From input headers |
-| `https_enforced` | bool | From input headers |
-| `mixed_content` | bool | From input headers |
-
 ---
 
 ## JSON output
@@ -298,7 +285,7 @@ When `--save` is passed, the runs directory receives:
 | File | Builder | Contents |
 |---|---|---|
 | `xray.md` | `buildXrayMd` | Raw xray.py output as tables (DOM, structure, element distribution, head, accessibility, forms, links, inline styles, text density, largest image candidate, duplicate headings) |
-| `onpage.md` | `buildOnpageMd` | Raw onpage.py output (content, headings + tree, violations, links, images, crawlability) |
+| `onpage.md` | `buildOnpageMd` | Raw onpage.py output (content, headings + tree, violations, links, images) |
 | `assets.md` | `buildAssetsMd` | Parsed assets from raw HTML (images, scripts, stylesheets, preloads) |
 | `structure.md` | `buildStructureMd` | **Unified summary** — the same sections as the terminal output, rendered as markdown with request + redirects header |
 | `structure.json` | — | Full JSON envelope (same as `--output json`) |
@@ -325,11 +312,10 @@ All five flow through the analyze pipeline to `report.structure` / `report.seo.c
 2. **Skeleton-only xray.** `xray.py` runs against the splitter's skeleton HTML by default, which has all text stripped. Some metrics that need original text (word count, title check, script inventory) fall back to the full HTML passed in the Python input.
 3. **Largest-image heuristic is declared dimensions only.** It does not fetch images or measure their natural size; `<img>` tags without `width`/`height` attributes are ignored even if they're visually dominant.
 4. **TOC detection is conservative.** The heuristic requires 3+ anchor links whose hash targets match actual H2/H3 ids, so TOCs built with JavaScript or linking to H4 only are missed.
-5. **Crawlability input is header-driven.** `onpage.py`'s crawlability section reads `headers['robots_blocked']`, `headers['sitemap_found']`, etc. — which the `sgnl structure` flow doesn't populate. Use `sgnl technical` or `sgnl analyze` for authoritative crawlability signals.
-6. **Duplicate headings capped at 5.** Sites with many repeated heading patterns will only see the top 5 by frequency.
-7. **Text-density regions are naive.** Nested semantic regions (e.g. `<main>` inside `<article>`) are counted per top-level region found by `soup.find()`. Multi-column layouts or nested `<main>` blocks may produce surprising counts.
-8. **No content scoring.** Unlike `sgnl analyze`, this command does not emit a readability score, E-E-A-T signals, or thin-content risk. Use `sgnl content` or `sgnl analyze` for those.
-9. **JSON envelope is not the AnalysisReport.** `sgnl structure --output json` wraps raw Python output. For the merged `AnalysisReport` shape used by the library API, use `sgnl analyze` or `SgnlClient.analyze()`.
+5. **Duplicate headings capped at 5.** Sites with many repeated heading patterns will only see the top 5 by frequency.
+6. **Text-density regions are naive.** Nested semantic regions (e.g. `<main>` inside `<article>`) are counted per top-level region found by `soup.find()`. Multi-column layouts or nested `<main>` blocks may produce surprising counts.
+7. **No content scoring.** Unlike `sgnl analyze`, this command does not emit a readability score, E-E-A-T signals, or thin-content risk. Use `sgnl content` or `sgnl analyze` for those.
+8. **JSON envelope is not the AnalysisReport.** `sgnl structure --output json` wraps raw Python output. For the merged `AnalysisReport` shape used by the library API, use `sgnl analyze` or `SgnlClient.analyze()`.
 
 ---
 
@@ -340,7 +326,7 @@ All five flow through the analyze pipeline to `report.structure` / `report.seo.c
 | `src/commands/structure.ts` | Command registration, fetch + Python orchestration, terminal printer, JSON envelope |
 | `python/split.py` | HTML → skeleton + markdown extractor |
 | `python/xray.py` | DOM + structure + audits (incl. Phase 4 webflow-tier signals) |
-| `python/onpage.py` | Headings, content, links, images, crawlability, TOC detection |
+| `python/onpage.py` | Headings, content, links, images, TOC detection |
 | `src/analysis/run-reporter.ts` | `buildXrayMd`, `buildOnpageMd`, `buildStructureMd` helpers |
 | `src/analysis/scoring.ts` | `DOMAnalysis` and `OnPageSEO` typed interfaces |
 | `src/analysis/orchestrator.ts` | `mapXrayToDOMAnalysis` and `mapOnpageToOnPageSEO` mappers (used by the analyze pipeline, not by this command) |
@@ -350,7 +336,7 @@ All five flow through the analyze pipeline to `report.structure` / `report.seo.c
 Tests:
 
 - `tests/python/test_xray.py` — 90 tests covering all audits + Phase 4 additions.
-- `tests/python/test_onpage.py` — 36 tests covering content, headings, links, images, crawlability, and TOC detection.
+- `tests/python/test_onpage.py` — tests covering content, headings, links, images, and TOC detection.
 - `tests/unit/mappers.test.ts` — TypeScript mapper coverage for Phase 4 DOMAnalysis fields and `table_of_contents_detected`.
 
 ---
