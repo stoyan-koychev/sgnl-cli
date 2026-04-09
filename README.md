@@ -3,8 +3,7 @@
 > **Analyze any URL for performance, SEO, and structure — in seconds.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](package.json)
-[![Tests](https://img.shields.io/badge/tests-842%20passing-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-826%20passing-brightgreen.svg)](#testing)
 
 ---
 

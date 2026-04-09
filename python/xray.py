@@ -83,7 +83,6 @@ def analyze_dom(html: str, original_html: Optional[str] = None, page_url: Option
         accessibility = _audit_accessibility(soup)
 
         # SEO audit
-        seo = _audit_seo(soup, original_soup)
 
         # Links audit
         links = _audit_links(soup)
@@ -131,7 +130,6 @@ def analyze_dom(html: str, original_html: Optional[str] = None, page_url: Option
             "head": head_audit,
             "content_ratios": content_ratios,
             "accessibility": accessibility,
-            "seo": seo,
             "links": links,
             "images": images,
             "forms": forms,
@@ -368,31 +366,6 @@ def _audit_accessibility(soup: BeautifulSoup) -> Dict[str, Any]:
         "aria_attribute_count": aria_count
     }
 
-
-def _audit_seo(soup: BeautifulSoup, original_soup: Optional[BeautifulSoup] = None) -> Dict[str, Any]:
-    """Audit SEO signals: meta description, OG tags, canonical, title.
-    Uses original_soup for title check since skeleton strips text."""
-    meta_desc = bool(soup.find('meta', attrs={'name': 'description'}))
-
-    og_tags = []
-    for tag in soup.find_all('meta', attrs={'property': True}):
-        prop = tag.get('property', '')
-        if prop.startswith('og:'):
-            og_tags.append(prop)
-
-    canonical = bool(soup.find('link', attrs={'rel': 'canonical'}))
-
-    # Use original HTML for title check (skeleton strips text)
-    check_soup = original_soup or soup
-    title_tag = check_soup.find('title')
-    title_non_empty = bool(title_tag and title_tag.get_text(strip=True))
-
-    return {
-        "meta_description_present": meta_desc,
-        "og_tags": og_tags,
-        "canonical_present": canonical,
-        "title_non_empty": title_non_empty
-    }
 
 
 def _audit_links(soup: BeautifulSoup) -> Dict[str, Any]:
@@ -671,7 +644,6 @@ def main() -> None:
                 "head": {},
                 "content_ratios": {"html_size_kb": 0, "word_count_approx": 0, "html_text_ratio": 0},
                 "accessibility": {},
-                "seo": {},
                 "links": {"total": 0, "internal": 0, "external": 0, "target_blank_missing_rel": 0},
                 "images": {"total": 0, "missing_alt": 0, "missing_dimensions": 0, "lazy_loaded": 0},
                 "forms": {"form_count": 0, "input_count": 0, "button_count": 0, "inputs_without_labels": 0, "forms_missing_action": 0},

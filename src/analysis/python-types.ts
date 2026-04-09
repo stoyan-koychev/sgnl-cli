@@ -59,12 +59,6 @@ export interface XrayOutput {
     html_missing_lang: boolean;
     aria_attribute_count: number;
   };
-  seo: {
-    meta_description_present: boolean;
-    og_tags: string[];
-    canonical_present: boolean;
-    title_non_empty: boolean;
-  };
   links: {
     total: number;
     internal: number;

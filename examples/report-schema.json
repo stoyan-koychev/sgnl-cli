@@ -276,7 +276,6 @@
                 "aria_attribute_count": { "type": "integer" }
               }
             },
-            "seo": { "type": "object", "description": "SEO signals: meta_description_present, og_tags[], canonical_present, title_non_empty." },
             "links": {
               "type": "object",
               "properties": {

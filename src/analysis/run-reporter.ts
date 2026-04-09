@@ -237,18 +237,6 @@ export function buildXrayMd(data: RunReportData): string {
     }
   }
 
-  // SEO Audit
-  const seo = x.seo ?? {};
-  if (Object.keys(seo).length > 0) {
-    lines.push('## SEO Audit', '');
-    lines.push('| Check | Value |');
-    lines.push('|-------|-------|');
-    lines.push(`| Title Non-Empty | ${seo.title_non_empty != null ? (seo.title_non_empty ? 'yes' : 'no') : 'n/a'} |`);
-    lines.push(`| Has Meta Description | ${seo.has_meta_description != null ? (seo.has_meta_description ? 'yes' : 'no') : 'n/a'} |`);
-    lines.push(`| Has Canonical | ${seo.has_canonical != null ? (seo.has_canonical ? 'yes' : 'no') : 'n/a'} |`);
-    lines.push(`| Has Lang Attribute | ${seo.has_lang != null ? (seo.has_lang ? 'yes' : 'no') : 'n/a'} |`);
-    lines.push('');
-  }
 
   // Accessibility
   const a11y = x.accessibility ?? {};

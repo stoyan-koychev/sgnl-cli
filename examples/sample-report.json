@@ -132,7 +132,6 @@
       "head": { "charset_present": true, "viewport_present": true, "favicon_present": true, "preload_count": 2 },
       "content_ratios": { "html_size_kb": 45.2, "word_count_approx": 1240, "html_text_ratio": 0.28 },
       "accessibility": { "images_missing_alt": 1, "inputs_without_label": 0, "buttons_links_no_text": 0, "html_missing_lang": false, "aria_attribute_count": 8 },
-      "seo": { "meta_description_present": true, "og_tags": ["og:title", "og:description", "og:image"], "canonical_present": true, "title_non_empty": true },
       "links": { "total": 15, "internal": 12, "external": 3, "target_blank_missing_rel": 1 },
       "images": { "total": 8, "missing_alt": 1, "missing_dimensions": 2, "lazy_loaded": 4 },
       "forms": { "form_count": 1, "input_count": 2, "button_count": 1, "inputs_without_labels": 0, "forms_missing_action": 0 },
