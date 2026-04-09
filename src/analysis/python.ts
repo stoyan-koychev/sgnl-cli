@@ -126,7 +126,7 @@ function validateScriptName(scriptName: string): void {
  * @throws {JSONParseError} if output is not valid JSON
  * @throws {PythonRuntimeError} if script exits with non-zero code
  */
-export async function runPythonScript(scriptName: string, input: string, timeout = 30000, argv1?: string, pythonPath?: string): Promise<string> {
+export async function runPythonScript(scriptName: string, input: string, timeout = 30000, argv1?: string, pythonPath?: string, extraArgs?: string[]): Promise<string> {
   // Validate script name
   validateScriptName(scriptName);
 
@@ -152,7 +152,7 @@ export async function runPythonScript(scriptName: string, input: string, timeout
         env: pythonEnv,
         maxBuffer: 10 * 1024 * 1024, // 10MB buffer
       };
-      const scriptArgs = argv1 !== undefined ? [scriptPath, argv1] : [scriptPath];
+      const scriptArgs = [scriptPath, ...(extraArgs ?? (argv1 !== undefined ? [argv1] : []))];
       proc = spawn(effectivePythonPath, scriptArgs, options);
       trackProcess(proc);
     } catch {
@@ -246,9 +246,9 @@ export async function runPythonScript(scriptName: string, input: string, timeout
  * @param timeout - Timeout in milliseconds
  * @returns Promise<PythonResult> - Parsed result with success flag and data
  */
-export async function runPythonScriptSafe(scriptName: string, input: string, timeout = 30000, argv1?: string, pythonPath?: string): Promise<PythonResult> {
+export async function runPythonScriptSafe(scriptName: string, input: string, timeout = 30000, argv1?: string, pythonPath?: string, extraArgs?: string[]): Promise<PythonResult> {
   try {
-    const output = await runPythonScript(scriptName, input, timeout, argv1, pythonPath);
+    const output = await runPythonScript(scriptName, input, timeout, argv1, pythonPath, extraArgs);
     const data = JSON.parse(output);
     return {
       success: true,

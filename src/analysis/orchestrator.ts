@@ -51,6 +51,8 @@ export interface BuildReportOptions {
   headers?: Record<string, string>;
   /** Programmatic config injection (overrides env + file). Used by SgnlClient. */
   config?: ResolvedConfig;
+  /** Options for split.py content extraction. */
+  splitOptions?: { onlyMainContent?: boolean; includeTags?: string[]; excludeTags?: string[] };
 }
 
 // ---------------------------------------------------------------------------
@@ -866,6 +868,7 @@ async function runPythonPipeline(
   timeout = 30000,
   config?: ResolvedConfig,
   customRequestHeaders?: Record<string, string>,
+  splitOptions?: { onlyMainContent?: boolean; includeTags?: string[]; excludeTags?: string[] },
 ): Promise<PythonPipelineResult> {
   const result: PythonAnalysis = {};
   const raw: PythonPipelineResult['raw'] = {};
@@ -876,7 +879,8 @@ async function runPythonPipeline(
   emit?.('split', 'running', { startedAt: tSplit });
   emit?.('technical_seo', 'running', { startedAt: tTech });
   const [splitSettled, techSeoSettled, robotsCheckSettled, schemaSettled] = await Promise.allSettled([
-    runPythonScriptSafe('split.py', html, timeout, url, pythonPath),
+    runPythonScriptSafe('split.py', html, timeout, url, pythonPath,
+      splitOptions ? [url ?? '', JSON.stringify(splitOptions)] : undefined),
     runPythonScriptSafe('technical_seo.py', JSON.stringify({ html, headers, url }), timeout, undefined, pythonPath),
     url
       ? runPythonScriptSafe('robots_check.py', JSON.stringify({ url, meta_robots_blocked: false, timeout_ms: timeout, headers: customRequestHeaders ?? {} }), timeout, undefined, pythonPath)
@@ -1060,6 +1064,7 @@ export async function* buildReportStream(url: string, options: BuildReportOption
           timeout,
           resolved ?? undefined,
           options.headers,
+          options.splitOptions,
         );
         python = pipelineResult.analysis;
         rawPython = pipelineResult.raw;

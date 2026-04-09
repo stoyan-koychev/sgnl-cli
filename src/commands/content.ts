@@ -42,6 +42,9 @@ type ContentOptions = {
   save: boolean;
   verbose: boolean;
   timeout: string;
+  fullContent: boolean;
+  excludeTags?: string[];
+  includeTags?: string[];
 };
 
 type ContentRequestContext = {
@@ -335,6 +338,9 @@ export function registerContentCommand(program: Command): void {
     .option('--verbose', 'In terminal mode, also dump raw payload', false)
     .option('--save', 'Save content.md, content.json, content_stats.md to runs/', false)
     .option('--timeout <ms>', 'Timeout per step in ms', '30000')
+    .option('--full-content', 'Keep nav/header/footer (disable main-content extraction)', false)
+    .option('--exclude-tags <selectors...>', 'CSS selectors to exclude from extraction')
+    .option('--include-tags <selectors...>', 'CSS selectors to include (extract only these)')
     .option('-H, --header <header...>', 'Custom HTTP header(s) in "Name: Value" format')
     .action(async (url: string, options: ContentOptions & { header?: string[] }) => {
       if (!isValidUrl(url)) {
@@ -362,7 +368,14 @@ export function registerContentCommand(program: Command): void {
 
         // Step 1: split.py → markdown
         logger.info('Extracting content...');
-        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, timeout, url);
+        const splitOpts: Record<string, unknown> = {};
+        if (options.fullContent) splitOpts.onlyMainContent = false;
+        if (options.excludeTags?.length) splitOpts.excludeTags = options.excludeTags;
+        if (options.includeTags?.length) splitOpts.includeTags = options.includeTags;
+        const splitArgs = Object.keys(splitOpts).length > 0
+          ? [url, JSON.stringify(splitOpts)]
+          : undefined;
+        const splitResult = await runPythonScriptSafe('split.py', fetchResult.html, timeout, url, undefined, splitArgs);
         const markdown: string = splitResult.data?.markdown ?? '';
 
         if (!markdown) {
