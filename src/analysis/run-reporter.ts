@@ -377,13 +377,6 @@ export function buildMetadataMd(data: RunReportData): string {
     lines.push('');
   }
 
-  // Schema
-  lines.push('## Schema.org', '');
-  lines.push(`JSON-LD blocks found: **${t.schema?.blocks_found ?? 0}**`, '');
-  if (t.schema?.types?.length) {
-    lines.push(`Types: ${t.schema.types.join(', ')}`, '');
-  }
-
   // Indexability
   lines.push('## Indexability', '');
   lines.push(`| Check | Value |`);
