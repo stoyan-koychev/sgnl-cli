@@ -337,16 +337,6 @@ export function buildMetadataMd(data: RunReportData): string {
   const t = data.rawTechSeo;
   const lines: string[] = [`# Metadata: ${new URL(data.url).hostname}`, ''];
 
-  // Response info
-  lines.push('## HTTP Response', '');
-  lines.push('| Field | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Status | ${data.statusCode} |`);
-  if (data.ttfb_ms != null) lines.push(`| TTFB | ${data.ttfb_ms} ms |`);
-  if (data.compression) lines.push(`| Compression | ${data.compression} |`);
-  if (data.cdnDetected) lines.push(`| CDN | ${data.cdnDetected} |`);
-  lines.push('');
-
   // Response headers
   const headerEntries = Object.entries(data.headers);
   if (headerEntries.length > 0) {
