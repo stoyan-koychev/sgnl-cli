@@ -27,8 +27,11 @@ export function registerAnalyzeCommand(program: Command): void {
     .option('--save', 'Save .md report files to runs/ directory', false)
     .option('--timeout <ms>', 'Timeout per analysis step in ms', '30000')
     .option('-v, --verbose', 'Print full detailed report to terminal', false)
+    .option('--full-content', 'Keep nav/header/footer — disable main-content extraction', false)
+    .option('--exclude-tags <selectors...>', 'CSS selectors to exclude from extraction')
+    .option('--include-tags <selectors...>', 'CSS selectors to include (extract only these)')
     .option('-H, --header <header...>', 'Custom HTTP header(s) in "Name: Value" format')
-    .action(async (url: string, options: { output: string; debug: boolean; skipPython: boolean; pythonOnly: boolean; stream: boolean; follow: boolean; depth: string; maxPages: string; include: string; exclude: string; device: string; save: boolean; timeout: string; verbose: boolean; header?: string[] }) => {
+    .action(async (url: string, options: { output: string; debug: boolean; skipPython: boolean; pythonOnly: boolean; stream: boolean; follow: boolean; depth: string; maxPages: string; include: string; exclude: string; device: string; save: boolean; timeout: string; verbose: boolean; header?: string[]; fullContent: boolean; excludeTags?: string[]; includeTags?: string[] }) => {
       // Validate URL
       if (!isValidUrl(url)) {
         console.error(`Error: Invalid URL "${url}". Must start with http:// or https://`);
@@ -37,6 +40,16 @@ export function registerAnalyzeCommand(program: Command): void {
 
       const config = resolveConfig();
       const headers = buildFetchHeaders(url, config, parseHeaderFlags(options.header));
+
+      // Build split.py options from CLI flags
+      const splitOptions: { onlyMainContent?: boolean; includeTags?: string[]; excludeTags?: string[] } | undefined =
+        (options.fullContent || options.excludeTags?.length || options.includeTags?.length)
+          ? {
+              ...(options.fullContent ? { onlyMainContent: false } : {}),
+              ...(options.excludeTags?.length ? { excludeTags: options.excludeTags } : {}),
+              ...(options.includeTags?.length ? { includeTags: options.includeTags } : {}),
+            }
+          : undefined;
 
       try {
         // Handle --follow flag for link tree crawler
@@ -76,6 +89,7 @@ export function registerAnalyzeCommand(program: Command): void {
               save: options.save,
               timeout: parseInt(options.timeout, 10),
               headers,
+              splitOptions,
             })) {
               if (!options.debug && report._raw) delete report._raw;
               process.stdout.write(JSON.stringify(report, null, 2) + '\n');
@@ -90,6 +104,7 @@ export function registerAnalyzeCommand(program: Command): void {
               save: options.save,
               timeout: parseInt(options.timeout, 10),
               headers,
+              splitOptions,
             });
             if (!options.debug && report._raw) delete report._raw;
             process.stdout.write(JSON.stringify(report, null, 2) + '\n', () => process.exit(0));
@@ -105,7 +120,7 @@ export function registerAnalyzeCommand(program: Command): void {
               React.default.createElement(ErrorBoundary, null,
                 React.default.createElement(App, {
                   url,
-                  flags: { skipPython: options.skipPython, pythonOnly: options.pythonOnly, device: options.device as 'mobile' | 'desktop', save: options.save, verbose: options.verbose },
+                  flags: { skipPython: options.skipPython, pythonOnly: options.pythonOnly, device: options.device as 'mobile' | 'desktop', save: options.save, verbose: options.verbose, splitOptions },
                 })
               )
             );
@@ -115,7 +130,7 @@ export function registerAnalyzeCommand(program: Command): void {
             const msg = renderErr instanceof Error ? renderErr.message : String(renderErr);
             console.error(`UI render error: ${msg}`);
             // Fallback: run pipeline and print JSON
-            const report = await buildReport(url, { skipPython: options.skipPython, skipPSI: options.pythonOnly, device: options.device as 'mobile' | 'desktop', save: options.save, timeout: parseInt(options.timeout, 10), headers });
+            const report = await buildReport(url, { skipPython: options.skipPython, skipPSI: options.pythonOnly, device: options.device as 'mobile' | 'desktop', save: options.save, timeout: parseInt(options.timeout, 10), headers, splitOptions });
             console.log('\nFallback JSON output:');
             console.log(JSON.stringify(report, null, 2));
             process.exit(0);

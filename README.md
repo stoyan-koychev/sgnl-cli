@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](package.json)
-[![Tests](https://img.shields.io/badge/tests-428%20passing-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-842%20passing-brightgreen.svg)](#testing)
 
 ---
 
@@ -12,7 +12,7 @@
 
 SGNL is a command-line tool that analyzes web pages for performance, SEO, and structural quality. Give it a URL and it returns Core Web Vitals, technical SEO signals, content quality metrics, DOM structure analysis, and actionable issues — from the terminal, as JSON, or as Markdown files.
 
-It combines three data sources in a single pipeline: an HTTP fetch with header/redirect analysis, Google's PageSpeed Insights and Chrome UX Report APIs for lab and field performance data, and a Python layer that parses the HTML for SEO, structure, and content signals. Results are merged with a priority chain (real user field data > lab data) and presented through a live terminal UI or piped as structured output.
+It combines three data sources in a single pipeline: a headless Chromium fetch (via Playwright) with full JavaScript rendering, header/redirect analysis, and mobile screenshots; Google's PageSpeed Insights and Chrome UX Report APIs for lab and field performance data; and a Python layer that parses the rendered HTML for SEO, structure, and content signals. Results are merged with a priority chain (real user field data > lab data) and presented through a live terminal UI or piped as structured output.
 
 ### Who it's for
 
@@ -36,6 +36,7 @@ SEO engineers, web developers, and site reliability teams who want to audit page
 ### Requirements and limitations
 
 - **Node.js 18+** is required
+- **Playwright** is used by `analyze` and `content` commands for headless Chromium rendering (JS-rendered pages, mobile screenshots). Install browsers with `npx playwright install chromium`
 - **Python 3.8+** is optional but recommended — without it, DOM analysis, on-page SEO, content analysis, and robots.txt checks are unavailable. The tool degrades silently; you still get HTTP, PSI, and CrUX data
 - **Google API key** is optional — without `SGNL_PSI_KEY`, PageSpeed Insights runs in keyless mode (rate-limited). CrUX requires the same key
 - **Python is required** for the `explorer crawl`, `technical`, `content`, `structure`, `robots`, and `schema` commands — these will fail without it
@@ -51,6 +52,7 @@ SEO engineers, web developers, and site reliability teams who want to audit page
 | Dependency                | Version   | Required             | Purpose                                                      |
 | ------------------------- | --------- | -------------------- | ------------------------------------------------------------ |
 | Node.js                   | >= 18.0.0 | Yes                  | Runtime for the CLI                                          |
+| Playwright + Chromium     | latest    | Yes (auto-installed) | Headless browser for JS rendering and screenshots            |
 | Python                    | >= 3.8    | No (but recommended) | HTML parsing, SEO analysis, content analysis, graph analysis |
 | Google API key            | —         | No                   | Unlocks PageSpeed Insights and CrUX without rate limits      |
 | Google OAuth2 credentials | —         | No                   | Google Search Console integration                            |
@@ -284,9 +286,12 @@ sgnl analyze <url> [flags]
 | `--include <pattern>` | string  | —          | Only crawl/analyze paths matching this glob (e.g. `/blog/*`). Used with `--follow`.          |
 | `--exclude <pattern>` | string  | —          | Skip paths matching this glob (e.g. `/admin/*`). Used with `--follow`.                       |
 | `--device <type>`     | string  | `mobile`   | Device emulation: `mobile` or `desktop`. Affects User-Agent and PSI strategy.                |
-| `--save`              | boolean | `false`    | Save Markdown report files to `runs/` directory. A `report.json` is always saved regardless. |
+| `--save`              | boolean | `false`    | Save Markdown report files and mobile screenshot to `runs/` directory. A `report.json` is always saved regardless. |
 | `--timeout <ms>`      | number  | `30000`    | Timeout per analysis step in ms (fetch, PSI, Python).                                        |
 | `-v, --verbose`       | boolean | `false`    | Show full detailed report in terminal mode (more sections visible).                          |
+| `--full-content`      | boolean | `false`    | Keep nav/header/footer in content extraction (disable main-content filtering).               |
+| `--exclude-tags <selectors...>` | string[] | — | CSS selectors to exclude from content extraction.                                    |
+| `--include-tags <selectors...>` | string[] | — | CSS selectors to include (extract only these elements).                               |
 
 **Examples:**
 
@@ -419,6 +424,9 @@ sgnl content <url> [flags]
 | `--save`               | boolean | `false`    | Save `content.md`, `content.json`, `content_stats.md` to runs/ |
 | `--verbose`            | boolean | `false`    | Dump the raw payload (truncated) at the end of terminal output |
 | `--timeout <ms>`       | number  | `30000`    | Timeout per step in ms                                         |
+| `--full-content`       | boolean | `false`    | Keep nav/header/footer (disable main-content extraction)       |
+| `--exclude-tags <selectors...>` | string[] | — | CSS selectors to exclude from extraction                |
+| `--include-tags <selectors...>` | string[] | — | CSS selectors to include (extract only these elements)  |
 
 **Examples:**
 
@@ -445,7 +453,7 @@ mentions, percentage count, nested heading outline, capped link inventory
 (200 entries), capped image inventory (100 entries), and the cleaned
 markdown body.
 
-**Requires:** Python 3.8+ with `beautifulsoup4` and `html2text`.
+**Requires:** Playwright (headless Chromium) and Python 3.8+ with `beautifulsoup4` and `html2text`.
 
 ---
 

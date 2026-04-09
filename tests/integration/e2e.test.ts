@@ -20,12 +20,12 @@ jest.mock('../../src/analysis/psi');
 jest.mock('../../src/analysis/python');
 jest.mock('../../src/analysis/crux');
 
-import { safeFetch } from '../../src/analysis/fetch';
+import { renderFetch } from '../../src/analysis/fetch';
 import { callPSI } from '../../src/analysis/psi';
 import { runPythonScriptSafe } from '../../src/analysis/python';
 import { fetchCrUXData } from '../../src/analysis/crux';
 
-const mockSafeFetch = safeFetch as jest.MockedFunction<typeof safeFetch>;
+const mockSafeFetch = renderFetch as jest.MockedFunction<typeof renderFetch>;
 const mockCallPSI = callPSI as jest.MockedFunction<typeof callPSI>;
 const mockRunPythonScriptSafe = runPythonScriptSafe as jest.MockedFunction<typeof runPythonScriptSafe>;
 const mockFetchCrUXData = fetchCrUXData as jest.MockedFunction<typeof fetchCrUXData>;

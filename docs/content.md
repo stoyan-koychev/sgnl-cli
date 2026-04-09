@@ -70,10 +70,47 @@ sgnl content <url> [flags]
 | `--verbose` | boolean | `false` | In terminal mode, append raw JSON payload |
 | `--save` | boolean | `false` | Write `content.md`, `content.json`, `content_stats.md` to runs dir |
 | `--timeout <ms>` | integer | `30000` | Timeout per step |
+| `--full-content` | boolean | `false` | Keep nav/header/footer — disable main-content extraction |
+| `--exclude-tags <selectors...>` | string[] | — | CSS selectors to exclude from extraction |
+| `--include-tags <selectors...>` | string[] | — | CSS selectors to include (extract only these elements) |
+
+## Content extraction options
+
+By default, `split.py` strips non-content elements (nav, header, footer,
+sidebar, ads, modals, cookie banners, etc.) to produce a clean main-content
+markdown. This matches `onlyMainContent: true` behavior.
+
+### `--full-content`
+
+Keeps everything — navigation, header, footer, sidebars. Useful when you
+need the complete page structure or want to compare chrome-to-content ratio
+with real page output.
+
+```bash
+sgnl content https://example.com --full-content
+```
+
+### `--include-tags`
+
+Extract only specific elements by CSS selector. Everything else is dropped.
+
+```bash
+sgnl content https://example.com --include-tags article main
+```
+
+### `--exclude-tags`
+
+Remove specific elements by CSS selector, in addition to the default
+non-content selectors (when `--full-content` is not set) or as the only
+filter (when `--full-content` is set).
+
+```bash
+sgnl content https://example.com --exclude-tags ".cookie-banner" ".promo"
+```
 
 ## Pipeline
 
-1. `safeFetch` the URL (captures status, TTFB, headers, redirect chain).
+1. `renderFetch` the URL via headless Chromium (JS rendering, captures status, TTFB, headers, redirect chain).
 2. Cheap raw-HTML word count (strip tags + split) — used for
    `content_to_chrome_ratio`.
 3. `python/split.py` → clean markdown.

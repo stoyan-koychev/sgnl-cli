@@ -10,17 +10,17 @@
 import { Command } from 'commander';
 
 jest.mock('../../src/analysis/fetch', () => ({
-  safeFetch: jest.fn(),
+  renderFetch: jest.fn(),
 }));
 jest.mock('../../src/analysis/python', () => ({
   runPythonScriptSafe: jest.fn(),
 }));
 
-import { safeFetch } from '../../src/analysis/fetch';
+import { renderFetch } from '../../src/analysis/fetch';
 import { runPythonScriptSafe } from '../../src/analysis/python';
 import { registerContentCommand } from '../../src/commands/content';
 
-const mockSafeFetch = safeFetch as jest.MockedFunction<typeof safeFetch>;
+const mockSafeFetch = renderFetch as jest.MockedFunction<typeof renderFetch>;
 const mockRunPy = runPythonScriptSafe as jest.MockedFunction<typeof runPythonScriptSafe>;
 
 function makeExtractPayload(bodyLen: number = 200): Record<string, any> {

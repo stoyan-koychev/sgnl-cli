@@ -27,6 +27,7 @@ export interface RunReportData {
   redirect_chain?: string[];
   headers: Record<string, string>;
   html: string;
+  screenshot?: Buffer;
   rawSplit?: { markdown?: string; skeleton?: string };
   rawXray?: Record<string, any>;
   rawTechSeo?: Record<string, any>;
@@ -78,6 +79,9 @@ export async function saveRunReport(data: RunReportData, saveMdFiles = true, con
       fs.writeFileSync(path.join(runDir, 'psi_debug.md'), buildPsiDebugMd(data));
       fs.writeFileSync(path.join(runDir, 'robots_check.md'), buildRobotsCheckMd(data));
       fs.writeFileSync(path.join(runDir, 'schema_validation.md'), buildSchemaValidationMd(data));
+    }
+    if (data.screenshot) {
+      fs.writeFileSync(path.join(runDir, 'screenshot.png'), data.screenshot);
     }
     if (data.report) {
       fs.writeFileSync(path.join(runDir, 'report.json'), JSON.stringify(data.report, null, 2));

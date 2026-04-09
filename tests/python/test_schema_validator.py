@@ -10,7 +10,7 @@ from schema_validator import (
     _resolve_type,
     _validate_block,
     _check_rich_results,
-    _score_block,
+    _compute_block_score as _score_block,
     _generate_recommendations,
     _is_valid_url,
     _is_valid_iso_date,
@@ -101,6 +101,7 @@ class TestResolveType:
 class TestValidateBlock:
     def test_complete_article(self):
         data = {
+            '@context': 'https://schema.org',
             '@type': 'Article',
             'headline': 'Test Article',
             'image': 'https://example.com/img.jpg',
@@ -110,6 +111,7 @@ class TestValidateBlock:
             'dateModified': '2024-03-22',
             'mainEntityOfPage': 'https://example.com/article',
             'description': 'A test article',
+            'inLanguage': 'en',
         }
         result = _validate_block(data, 'Article')
         assert result['required']['missing'] == []
@@ -312,18 +314,16 @@ class TestScoring:
             'format_errors': [],
             'warnings': [],
         }
-        rich = {'eligible': True, 'types': ['X'], 'missing_for_eligibility': []}
-        assert _score_block(validation, rich) == 100  # 100 + 10 bonus, capped at 100
+        assert _score_block(validation) == 100
 
-    def test_missing_required_deducts_15(self):
+    def test_missing_required_deducts_20(self):
         validation = {
             'required': {'fields': ['a', 'b'], 'present': ['a'], 'missing': ['b']},
             'recommended': {'fields': [], 'present': [], 'missing': []},
             'format_errors': [],
             'warnings': [],
         }
-        rich = {'eligible': False, 'types': [], 'missing_for_eligibility': ['b']}
-        assert _score_block(validation, rich) == 85  # 100 - 15
+        assert _score_block(validation) == 80  # 100 - 20
 
     def test_missing_recommended_deducts_5(self):
         validation = {
@@ -332,8 +332,7 @@ class TestScoring:
             'format_errors': [],
             'warnings': [],
         }
-        rich = {'eligible': True, 'types': ['X'], 'missing_for_eligibility': []}
-        assert _score_block(validation, rich) == 100  # 100 - 10 + 10 bonus
+        assert _score_block(validation) == 90  # 100 - 5*2
 
     def test_format_error_deducts_10(self):
         validation = {
@@ -342,8 +341,7 @@ class TestScoring:
             'format_errors': [{'field': 'date', 'value': 'bad', 'expected': 'ISO', 'message': 'bad date'}],
             'warnings': [],
         }
-        rich = {'eligible': False, 'types': [], 'missing_for_eligibility': []}
-        assert _score_block(validation, rich) == 90
+        assert _score_block(validation) == 90  # 100 - 10
 
     def test_score_floors_at_zero(self):
         validation = {
@@ -352,8 +350,7 @@ class TestScoring:
             'format_errors': [],
             'warnings': [],
         }
-        rich = {'eligible': False, 'types': [], 'missing_for_eligibility': []}
-        assert _score_block(validation, rich) == 0  # 100 - 120 = -20 → 0
+        assert _score_block(validation) == 0  # 100 - 160 = -60 → 0
 
 
 # ── Recommendations ───────────────────────────────────────────────────────

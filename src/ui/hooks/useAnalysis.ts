@@ -27,6 +27,7 @@ export interface AnalysisFlags {
   device?: 'mobile' | 'desktop';
   save?: boolean;
   verbose?: boolean;
+  splitOptions?: { onlyMainContent?: boolean; includeTags?: string[]; excludeTags?: string[] };
 }
 
 const PIPELINE_STEPS = [
@@ -92,6 +93,7 @@ export function useAnalysis(url: string, flags: AnalysisFlags): AnalysisState {
           device: flags.device,
           save: flags.save,
           onProgress,
+          splitOptions: flags.splitOptions,
         })) {
           const isPartial = report._partial === true;
           setState(prev => ({
