@@ -88,9 +88,7 @@ function mockOnPageSEO(overrides: Partial<OnPageSEO> = {}): OnPageSEO {
     content_word_count: 500,
     image_alt_missing: 1,
     internal_links: 8,
-    https_enforced: true,
     heading_hierarchy_valid: true,
-    has_sitemap: true,
     has_robots: true,
     ...overrides,
   };

@@ -417,7 +417,7 @@ export function mapTechSeoToTechnicalSEO(data: Record<string, any>): TechnicalSE
 /**
  * Map onpage.py JSON output to OnPageSEO interface.
  * Preserves the original 7 fields exactly and additively populates
- * heading tree/violations, content, links, images, and crawlability detail.
+ * heading tree/violations, content, links, and images detail.
  */
 export function mapOnpageToOnPageSEO(data: Record<string, any>): OnPageSEO | undefined {
   try {
@@ -428,9 +428,7 @@ export function mapOnpageToOnPageSEO(data: Record<string, any>): OnPageSEO | und
       content_word_count: data?.content?.word_count ?? 0,
       image_alt_missing: data?.images?.missing_alt ?? 0,
       internal_links: data?.links?.internal_total ?? 0,
-      https_enforced: data?.crawlability?.https_enforced ?? true,
       heading_hierarchy_valid: data?.headings?.hierarchy_valid ?? false,
-      has_sitemap: data?.crawlability?.sitemap_found ?? false,
     };
 
     const h = data?.headings;
@@ -504,18 +502,6 @@ export function mapOnpageToOnPageSEO(data: Record<string, any>): OnPageSEO | und
         modern_format: img.modern_format ?? 0,
         explicit_dimensions: img.explicit_dimensions ?? 0,
         density_per_1000_words: img.density_per_1000_words ?? 0,
-      };
-    }
-
-    const cr = data?.crawlability;
-    if (cr) {
-      result.crawlability = {
-        status_code: cr.status_code ?? 0,
-        redirect_count: cr.redirect_count ?? 0,
-        robots_blocked: cr.robots_blocked ?? false,
-        sitemap_found: cr.sitemap_found ?? false,
-        https_enforced: cr.https_enforced ?? false,
-        mixed_content: cr.mixed_content ?? false,
       };
     }
 

@@ -659,20 +659,6 @@ function buildSeoOnPageSection(r: AnalysisReport): string {
     parts.push(table(['Metric', 'Value'], imgRows));
   }
 
-  // 5d — Crawlability Detail
-  const crawl = op?.crawlability;
-  if (crawl) {
-    parts.push('', '### Crawlability Detail', '');
-    const crawlRows: string[][] = [
-      ['Status code', dash(crawl.status_code)],
-      ['Redirect count', dash(crawl.redirect_count)],
-      ['Robots blocked', boolYN(crawl.robots_blocked)],
-      ['Sitemap found', boolYN(crawl.sitemap_found)],
-      ['HTTPS enforced', boolYN(crawl.https_enforced)],
-      ['Mixed content', boolYN(crawl.mixed_content)],
-    ];
-    parts.push(table(['Check', 'Value'], crawlRows));
-  }
 
   return parts.join('\n');
 }

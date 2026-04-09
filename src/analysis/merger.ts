@@ -450,7 +450,7 @@ function generateIssues(
 
   // Sitemap not found
   const robotsSitemaps = rawPythonData?.robotsCheck?.sitemaps ?? [];
-  if (onpage && onpage.has_sitemap === false && robotsSitemaps.length === 0) {
+  if (robotsSitemaps.length === 0) {
     warning.push('No sitemap detected: submit a sitemap to improve crawl efficiency');
   }
 

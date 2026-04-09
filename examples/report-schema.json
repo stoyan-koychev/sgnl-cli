@@ -330,7 +330,7 @@
         },
         "onpage": {
           "type": "object",
-          "description": "Full onpage.py output: content metrics, heading details, link quality, image quality (alt, dimensions, modern formats, lazy loading), crawlability signals."
+          "description": "Full onpage.py output: content metrics, heading details, link quality, image quality (alt, dimensions, modern formats, lazy loading)."
         },
         "content_analysis": {
           "type": "object",

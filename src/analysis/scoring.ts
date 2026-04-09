@@ -326,9 +326,7 @@ export interface OnPageSEO {
   content_word_count: number;
   image_alt_missing: number;
   internal_links: number;
-  https_enforced: boolean;
   heading_hierarchy_valid?: boolean;
-  has_sitemap?: boolean;
   has_robots?: boolean;
 
   // --- Expanded onpage.py fields (all optional, additive) ---
@@ -371,14 +369,6 @@ export interface OnPageSEO {
     modern_format: number;
     explicit_dimensions: number;
     density_per_1000_words: number;
-  };
-  crawlability?: {
-    status_code: number;
-    redirect_count: number;
-    robots_blocked: boolean;
-    sitemap_found: boolean;
-    https_enforced: boolean;
-    mixed_content: boolean;
   };
 }
 

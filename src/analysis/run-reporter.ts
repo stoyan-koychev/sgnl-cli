@@ -513,8 +513,6 @@ export function buildOnpageMd(data: RunReportData): string {
   const headings = o.headings ?? {};
   const links = o.links ?? {};
   const images = o.images ?? {};
-  const crawlability = o.crawlability ?? {};
-
   const lines: string[] = [`# On-Page SEO: ${new URL(data.url).hostname}`, ''];
 
   // Content
@@ -607,17 +605,6 @@ export function buildOnpageMd(data: RunReportData): string {
   }
   lines.push('');
 
-  // Crawlability
-  lines.push('## Crawlability', '');
-  lines.push('| Check | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Status Code | ${crawlability.status_code ?? 'n/a'} |`);
-  lines.push(`| Redirects | ${crawlability.redirect_count ?? 0} |`);
-  lines.push(`| Robots Blocked | ${crawlability.robots_blocked ? 'yes' : 'no'} |`);
-  lines.push(`| Sitemap Found | ${crawlability.sitemap_found ? 'yes' : 'no'} |`);
-  lines.push(`| HTTPS Enforced | ${crawlability.https_enforced ? 'yes' : 'no'} |`);
-  lines.push(`| Mixed Content | ${crawlability.mixed_content ? 'yes' : 'no'} |`);
-  lines.push('');
 
   return lines.join('\n');
 }
@@ -2204,20 +2191,6 @@ export function buildStructureMd(
     lines.push('');
   }
 
-  // Crawlability
-  const crawl = o.crawlability ?? {};
-  if (Object.keys(crawl).length > 0) {
-    lines.push('## Crawlability', '');
-    lines.push('| Check | Value |');
-    lines.push('|-------|-------|');
-    lines.push(`| Status Code | ${crawl.status_code ?? 'n/a'} |`);
-    lines.push(`| Redirects | ${crawl.redirect_count ?? 0} |`);
-    lines.push(`| Robots Blocked | ${crawl.robots_blocked ? 'yes' : 'no'} |`);
-    lines.push(`| Sitemap Found | ${crawl.sitemap_found ? 'yes' : 'no'} |`);
-    lines.push(`| HTTPS Enforced | ${crawl.https_enforced ? 'yes' : 'no'} |`);
-    lines.push(`| Mixed Content | ${crawl.mixed_content ? 'yes' : 'no'} |`);
-    lines.push('');
-  }
 
   return lines.join('\n');
 }

@@ -174,51 +174,6 @@ class TestImageAnalysis:
         assert result['images']['too_long'] >= 1
 
 
-class TestCrawlability:
-    """Test crawlability analysis."""
-    
-    def test_status_code(self):
-        """Test status code handling."""
-        headers = {"status_code": "200"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['status_code'] == 200
-    
-    def test_redirect_count(self):
-        """Test redirect count."""
-        headers = {"redirect_count": "2"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['redirect_count'] == 2
-    
-    def test_robots_blocked(self):
-        """Test robots.txt blocking detection."""
-        headers = {"robots_blocked": "true"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['robots_blocked'] == True
-    
-    def test_https_enforcement(self):
-        """Test HTTPS enforcement detection."""
-        headers = {"https": "true"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['https_enforced'] == True
-    
-    def test_mixed_content(self):
-        """Test mixed content detection."""
-        headers = {"mixed_content": "true"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['mixed_content'] == True
-    
-    def test_sitemap_found(self):
-        """Test sitemap detection."""
-        headers = {"sitemap_found": "true"}
-        result = analyze_onpage("", "", headers)
-        
-        assert result['crawlability']['sitemap_found'] == True
-
 
 class TestOnpageIntegration:
     """Integration tests for on-page SEO."""
@@ -257,7 +212,7 @@ class TestOnpageIntegration:
         assert result['images']['total'] == 1
         assert result['links']['internal_total'] >= 1
         assert result['links']['external_total'] >= 1
-        assert result['crawlability']['status_code'] == 200
+        assert 'crawlability' not in result
     
     def test_empty_analysis(self):
         """Test with empty markdown and HTML."""

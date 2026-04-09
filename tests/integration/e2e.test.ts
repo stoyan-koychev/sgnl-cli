@@ -686,7 +686,6 @@ describe('SGNL Integration Tests — Full Pipeline e2e', () => {
         headings: { h1_count: 1, h1_content: 'Welcome to Example', hierarchy_valid: true, empty_headings: 0 },
         links: { internal_total: 3, internal_generic_anchor: 0, external_total: 1, external_broken: 0 },
         images: { total: 2, missing_alt: 0, empty_alt_decorative: 0, too_short: 0, too_long: 0 },
-        crawlability: { status_code: 200, redirect_count: 0, robots_blocked: false, sitemap_found: true, https_enforced: true, mixed_content: false },
       },
     });
 

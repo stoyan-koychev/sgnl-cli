@@ -258,14 +258,6 @@ export interface OnpageOutput {
     explicit_dimensions: number;
     density_per_1000_words: number;
   };
-  crawlability: {
-    status_code: number;
-    redirect_count: number;
-    robots_blocked: boolean;
-    sitemap_found: boolean;
-    https_enforced: boolean;
-    mixed_content: boolean;
-  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -212,14 +212,6 @@ echo '{"markdown": "# Title\n\nContent", "html": "..."}' | python3 onpage.py
     "too_short": 1,
     "too_long": 2
   },
-  "crawlability": {
-    "status_code": 200,
-    "redirect_count": 0,
-    "robots_blocked": false,
-    "sitemap_found": false,
-    "https_enforced": true,
-    "mixed_content": false
-  }
 }
 ```
 
@@ -311,7 +303,7 @@ pytest tests/python/ --cov=python --cov-report=html
 - **test_split.py**: 10+ tests (text removal, script clearing, empty/malformed HTML, large files, attributes)
 - **test_xray.py**: 25+ tests (element counting, depth calculation, div ratio, heading hierarchy, empty elements, duplicate IDs, deprecated tags, events, iframes, head audit, content ratios)
 - **test_technical_seo.py**: 18+ tests (meta tags, canonical, OG tags, schema, indexability, links, headers)
-- **test_onpage.py**: 23+ tests (content analysis, headings, links, images, crawlability)
+- **test_onpage.py**: 17+ tests (content analysis, headings, links, images)
 
 All tests passing ✓
 

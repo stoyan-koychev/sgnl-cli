@@ -279,7 +279,6 @@ function buildOnpageMd(data: DebugRunData): string {
   const headings = o.headings ?? {};
   const links = o.links ?? {};
   const images = o.images ?? {};
-  const crawlability = o.crawlability ?? {};
 
   const lines: string[] = [`# On-Page SEO: ${new URL(data.url).hostname}`, ''];
 
@@ -329,17 +328,6 @@ function buildOnpageMd(data: DebugRunData): string {
   lines.push(`| Alt Too Long (>125 chars) | ${images.too_long ?? 'n/a'} |`);
   lines.push('');
 
-  // Crawlability
-  lines.push('## Crawlability', '');
-  lines.push('| Check | Value |');
-  lines.push('|-------|-------|');
-  lines.push(`| Status Code | ${crawlability.status_code ?? 'n/a'} |`);
-  lines.push(`| Redirects | ${crawlability.redirect_count ?? 0} |`);
-  lines.push(`| Robots Blocked | ${crawlability.robots_blocked ? 'yes' : 'no'} |`);
-  lines.push(`| Sitemap Found | ${crawlability.sitemap_found ? 'yes' : 'no'} |`);
-  lines.push(`| HTTPS Enforced | ${crawlability.https_enforced ? 'yes' : 'no'} |`);
-  lines.push(`| Mixed Content | ${crawlability.mixed_content ? 'yes' : 'no'} |`);
-  lines.push('');
 
   return lines.join('\n');
 }
