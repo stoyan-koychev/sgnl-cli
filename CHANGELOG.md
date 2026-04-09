@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- [#6](https://github.com/stoyan-koychev/sgnl-cli/pull/6) [`2086842`](https://github.com/stoyan-koychev/sgnl-cli/commit/20868424208861003e34be6b60428ce824a2d854) Thanks [@stoyan-koychev](https://github.com/stoyan-koychev)! - Remove duplicated report sections (crawlability from on-page SEO, SEO audit from xray, JSON-LD from technical SEO, HTTP response from metadata), fix OG [object Object] rendering, resolve asset and preload URLs to absolute with imagesrcset fallback, replace TF-IDF with percentage in keywords, standardize md report titles with URL line, rename psi_debug.md to psi.md
+
 ## 1.2.0
 
 ### Minor Changes
