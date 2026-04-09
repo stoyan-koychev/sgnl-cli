@@ -76,7 +76,7 @@ export async function saveRunReport(data: RunReportData, saveMdFiles = true, con
       fs.writeFileSync(path.join(runDir, 'onpage.md'), buildOnpageMd(data));
       fs.writeFileSync(path.join(runDir, 'technical_seo.md'), buildTechSeoMd(data));
       fs.writeFileSync(path.join(runDir, 'content_analysis.md'), buildContentAnalysisMd(data));
-      fs.writeFileSync(path.join(runDir, 'psi_debug.md'), buildPsiDebugMd(data));
+      fs.writeFileSync(path.join(runDir, 'psi.md'), buildPsiDebugMd(data));
       fs.writeFileSync(path.join(runDir, 'robots_check.md'), buildRobotsCheckMd(data));
       fs.writeFileSync(path.join(runDir, 'schema_validation.md'), buildSchemaValidationMd(data));
     }
@@ -128,7 +128,7 @@ export function buildXrayMd(data: RunReportData): string {
   const head = x.head ?? {};
   const elementMap: Record<string, number> = x.element_map ?? {};
 
-  const lines: string[] = [`# DOM X-Ray: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# X-Ray`, '', `> URL: ${data.url}`, ''];
 
   // DOM Overview
   lines.push('## DOM Overview', '');
@@ -335,7 +335,7 @@ export function buildXrayMd(data: RunReportData): string {
 
 export function buildMetadataMd(data: RunReportData): string {
   const t = data.rawTechSeo;
-  const lines: string[] = [`# Metadata: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Metadata`, '', `> URL: ${data.url}`, ''];
 
   // Response headers
   const headerEntries = Object.entries(data.headers);
@@ -478,13 +478,13 @@ function parseAssets(html: string): {
 
 export function buildOnpageMd(data: RunReportData): string {
   const o = data.rawOnpage;
-  if (!o) return `# On-Page SEO: ${new URL(data.url).hostname}\n\n_No onpage data available._\n`;
+  if (!o) return `# On-Page SEO\n\n> URL: ${data.url}\n\n_No onpage data available._\n`;
 
   const content = o.content ?? {};
   const headings = o.headings ?? {};
   const links = o.links ?? {};
   const images = o.images ?? {};
-  const lines: string[] = [`# On-Page SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# On-Page SEO`, '', `> URL: ${data.url}`, ''];
 
   // Content
   lines.push('## Content', '');
@@ -586,9 +586,9 @@ export function buildOnpageMd(data: RunReportData): string {
 
 export function buildTechSeoMd(data: RunReportData): string {
   const t = data.rawTechSeo;
-  if (!t) return `# Technical SEO: ${new URL(data.url).hostname}\n\n_No technical SEO data available._\n`;
+  if (!t) return `# Technical SEO\n\n> URL: ${data.url}\n\n_No technical SEO data available._\n`;
 
-  const lines: string[] = [`# Technical SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Technical SEO`, '', `> URL: ${data.url}`, ''];
 
   // Request (Phase 2e)
   const reqRows: string[][] = [];
@@ -861,10 +861,9 @@ export function buildTechSeoMd(data: RunReportData): string {
 
 export function buildContentAnalysisMd(data: RunReportData): string {
   const ca = data.rawContentAnalysis;
-  if (!ca) return `# Content Analysis: ${new URL(data.url).hostname}\n\n_No content analysis data available._\n`;
+  if (!ca) return `# Content Analysis\n\n> URL: ${data.url}\n\n_No content analysis data available._\n`;
 
-  const hostname = new URL(data.url).hostname;
-  const lines: string[] = [`# Content Analysis: ${hostname}`, ''];
+  const lines: string[] = [`# Content Analysis`, '', `> URL: ${data.url}`, ''];
 
   // Overview
   lines.push('## Overview', '');
@@ -1211,11 +1210,12 @@ export function buildContentAnalysisMd(data: RunReportData): string {
 
 export function buildScoreMd(data: RunReportData): string {
   const ca = data.rawContentAnalysis;
-  if (!ca) return `# Score Report: ${new URL(data.url).hostname}\n\n_No content analysis data available._\n`;
+  if (!ca) return `# Score Report\n\n> URL: ${data.url}\n\n_No content analysis data available._\n`;
 
-  const hostname = new URL(data.url).hostname;
   const lines: string[] = [
-    `# Score Report — ${hostname}`,
+    `# Score Report`,
+    '',
+    `> URL: ${data.url}`,
     `> URL: ${data.url}`,
     `> Generated: ${new Date().toISOString()}`,
     '',
@@ -1431,19 +1431,18 @@ export function buildScoreMd(data: RunReportData): string {
 }
 
 // ---------------------------------------------------------------------------
-// psi_debug.md — raw PSI + CrUX API responses for debugging
+// psi.md — raw PSI + CrUX API responses
 // ---------------------------------------------------------------------------
 
 export function buildPsiDebugMd(data: RunReportData): string {
-  const hostname = new URL(data.url).hostname;
-  const lines: string[] = [`# PSI Debug: ${hostname}`, '', `URL: ${data.url}`, ''];
+  const hasDesktop = !!data.rawPsi?.desktop;
+  const hasMobile = !!data.rawPsi?.mobile;
+  const deviceLabel = hasDesktop && hasMobile ? '' : hasDesktop ? ' Desktop' : hasMobile ? ' Mobile' : '';
+  const lines: string[] = [`# Page Speed Insights${deviceLabel}`, '', `> URL: ${data.url}`, ''];
 
   const buildPsiSection = (label: string, raw: any) => {
-    lines.push(`## PSI ${label}`, '');
-    if (!raw) {
-      lines.push(`_No PSI ${label} data (API key missing, error, or timeout)._`, '');
-      return;
-    }
+    if (!raw) return;
+    if (hasDesktop && hasMobile) lines.push(`## PSI ${label}`, '');
 
     // Performance score
     const perfScore = raw.lighthouseResult?.categories?.performance?.score;
@@ -1517,11 +1516,10 @@ export function buildPsiDebugMd(data: RunReportData): string {
 
 export function buildRobotsCheckMd(data: RunReportData): string {
   const r = data.rawRobotsCheck;
-  const hostname = new URL(data.url).hostname;
 
-  if (!r) return `# Robots.txt Check: ${hostname}\n\n_No robots check data available._\n`;
+  if (!r) return `# Robots.txt Check\n\n> URL: ${data.url}\n\n_No robots check data available._\n`;
 
-  const lines: string[] = [`# Robots.txt Check: ${hostname}`, ''];
+  const lines: string[] = [`# Robots.txt Check`, '', `> URL: ${data.url}`, ''];
 
   // --- Request section -------------------------------------------------
   const req = r.request ?? {};
@@ -1662,7 +1660,7 @@ export function buildRobotsCheckMd(data: RunReportData): string {
 }
 
 export function buildAssetsMd(data: RunReportData): string {
-  const lines: string[] = [`# Assets: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Assets`, '', `> URL: ${data.url}`, ''];
   const parsed = parseAssets(data.html);
   const { inlineScripts } = parsed;
 
@@ -1739,11 +1737,10 @@ export function buildAssetsMd(data: RunReportData): string {
 
 export function buildSchemaValidationMd(data: RunReportData): string {
   const sv = data.rawSchemaValidation as any;
-  const hostname = new URL(data.url).hostname;
 
-  if (!sv) return `# Schema Validation: ${hostname}\n\n_No schema validation data available._\n`;
+  if (!sv) return `# Schema Validation\n\n> URL: ${data.url}\n\n_No schema validation data available._\n`;
 
-  const lines: string[] = [`# Schema Validation: ${hostname}`, '', `> URL: ${data.url}`, ''];
+  const lines: string[] = [`# Schema Validation`, '', `> URL: ${data.url}`, ''];
 
   // Summary
   const summary = sv.summary ?? {};
@@ -1865,10 +1862,9 @@ export function buildStructureMd(
     redirect_chain?: string[];
   },
 ): string {
-  const hostname = new URL(data.url).hostname;
   const x = data.rawXray ?? {};
   const o = data.rawOnpage ?? {};
-  const lines: string[] = [`# Page Structure: ${hostname}`, '', `> URL: ${data.url}`, ''];
+  const lines: string[] = [`# Page Structure`, '', `> URL: ${data.url}`, ''];
 
   // Request
   if (fetchContext) {
@@ -2392,9 +2388,7 @@ function buildPerformanceSection(perf: PerformanceReport): string[] {
  */
 export function buildPerformanceMd(envelope: PerformanceEnvelope): string {
   const { request, performance } = envelope;
-  const hostname = (() => { try { return new URL(request.url).hostname; } catch { return request.url; } })();
-
-  const lines: string[] = [`# Performance: ${hostname}`, '', `> URL: ${request.url}`, ''];
+  const lines: string[] = [`# Performance`, '', `> URL: ${request.url}`, ''];
 
   // Request block
   lines.push('## Request', '');

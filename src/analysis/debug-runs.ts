@@ -72,7 +72,7 @@ function buildXrayMd(data: DebugRunData): string {
   const head = x.head ?? {};
   const elementMap: Record<string, number> = x.element_map ?? {};
 
-  const lines: string[] = [`# DOM X-Ray: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# X-Ray`, '', `> URL: ${data.url}`, ''];
 
   // DOM Overview
   lines.push('## DOM Overview', '');
@@ -139,7 +139,7 @@ function buildXrayMd(data: DebugRunData): string {
 
 function buildMetadataMd(data: DebugRunData): string {
   const t = data.rawTechSeo;
-  const lines: string[] = [`# Metadata: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Metadata`, '', `> URL: ${data.url}`, ''];
 
   // Response headers
   const headerEntries = Object.entries(data.headers);
@@ -256,14 +256,14 @@ function parseAssets(html: string): {
 
 function buildOnpageMd(data: DebugRunData): string {
   const o = data.rawOnpage;
-  if (!o) return `# On-Page SEO: ${new URL(data.url).hostname}\n\n_No onpage data available._\n`;
+  if (!o) return `# On-Page SEO\n\n> URL: ${data.url}\n\n_No onpage data available._\n`;
 
   const content = o.content ?? {};
   const headings = o.headings ?? {};
   const links = o.links ?? {};
   const images = o.images ?? {};
 
-  const lines: string[] = [`# On-Page SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# On-Page SEO`, '', `> URL: ${data.url}`, ''];
 
   // Content
   lines.push('## Content', '');
@@ -321,9 +321,9 @@ function buildOnpageMd(data: DebugRunData): string {
 
 function buildTechSeoMd(data: DebugRunData): string {
   const t = data.rawTechSeo;
-  if (!t) return `# Technical SEO: ${new URL(data.url).hostname}\n\n_No technical SEO data available._\n`;
+  if (!t) return `# Technical SEO\n\n> URL: ${data.url}\n\n_No technical SEO data available._\n`;
 
-  const lines: string[] = [`# Technical SEO: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Technical SEO`, '', `> URL: ${data.url}`, ''];
 
   // Meta Tags
   lines.push('## Meta Tags', '');
@@ -395,7 +395,7 @@ function buildTechSeoMd(data: DebugRunData): string {
 }
 
 function buildAssetsMd(data: DebugRunData): string {
-  const lines: string[] = [`# Assets: ${new URL(data.url).hostname}`, ''];
+  const lines: string[] = [`# Assets`, '', `> URL: ${data.url}`, ''];
   const { images, externalScripts, inlineScripts, stylesheets, preloads } = parseAssets(data.html);
 
   // Images
