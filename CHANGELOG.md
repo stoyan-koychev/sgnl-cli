@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- [#4](https://github.com/stoyan-koychev/sgnl-cli/pull/4) [`7b1734c`](https://github.com/stoyan-koychev/sgnl-cli/commit/7b1734c8a8c6a91d55ec13572cec46d50bc65d9f) Thanks [@stoyan-koychev](https://github.com/stoyan-koychev)! - Add Playwright headless browser for JS rendering, mobile screenshots, improved content extraction with GFM table parity, srcset resolution, extraction options (--full-content, --include-tags, --exclude-tags), and bot detection mitigation
+
 ## 1.1.0
 
 ### Minor Changes
