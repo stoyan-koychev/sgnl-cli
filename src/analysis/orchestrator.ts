@@ -3,7 +3,7 @@
  * High-level pipeline: fetch → PSI → Python → score → merge → AnalysisReport
  */
 
-import { safeFetch } from './fetch';
+import { renderFetch } from './fetch';
 import { callPSI, PSIResult, FieldData } from './psi';
 import { fetchCrUXData } from './crux';
 import { fetchGSCData, GSCData } from './gsc';
@@ -1046,7 +1046,7 @@ export async function* buildReportStream(url: string, options: BuildReportOption
   // ── 1. HTTP Fetch ──────────────────────────────────────────────────────────
   const tFetch = Date.now();
   emit('fetch', 'running', { startedAt: tFetch });
-  const fetchResult = await safeFetch(url, { device, timeout, headers: options.headers });
+  const fetchResult = await renderFetch(url, { device, timeout, headers: options.headers, screenshot: options.save });
   emit('fetch', 'done', { duration_ms: Date.now() - tFetch });
 
   // ── PHASE 1: Start Python + Google APIs in parallel (non-blocking) ────────
@@ -1201,6 +1201,7 @@ export async function* buildReportStream(url: string, options: BuildReportOption
     redirect_chain: fetchResult.redirect_chain,
     headers: (fetchResult.headers as Record<string, string>) ?? {},
     html: fetchResult.html ?? '',
+    screenshot: fetchResult.screenshot,
     rawSplit: rawPython.split,
     rawXray: rawPython.xray,
     rawTechSeo: rawPython.techSeo,

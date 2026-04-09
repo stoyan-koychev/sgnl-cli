@@ -21,7 +21,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
-import { safeFetch } from '../analysis/fetch';
+import { renderFetch } from '../analysis/fetch';
 import { runPythonScriptSafe } from '../analysis/python';
 import { createRunDir } from '../analysis/run-reporter';
 import { isValidUrl, parseHeaderFlags, buildFetchHeaders } from './helpers';
@@ -356,7 +356,7 @@ export function registerContentCommand(program: Command): void {
         const headers = buildFetchHeaders(url, config, parseHeaderFlags(options.header));
 
         logger.info(`Fetching ${url}...`);
-        const fetchResult = await safeFetch(url, { device, timeout, headers });
+        const fetchResult = await renderFetch(url, { device, timeout, headers });
 
         if (!fetchResult.html) {
           console.error(`Error: No HTML received (HTTP ${fetchResult.status})`);

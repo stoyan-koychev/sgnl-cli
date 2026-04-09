@@ -24,6 +24,12 @@ export interface FetchResult {
   cdnDetected?: string;
   compression?: string;
   error?: string | null;
+  screenshot?: Buffer;
+}
+
+export interface RenderFetchOptions extends FetchOptions {
+  screenshot?: boolean;
+  waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' | 'commit';
 }
 
 /**
@@ -226,6 +232,116 @@ export async function safeFetch(url: string, options?: FetchOptions): Promise<Fe
       headers: {},
       ttfb_ms: ttfbMs,
       redirect_chain: redirectChain,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Fetch a URL using headless Chromium via Playwright.
+ * Renders JavaScript, waits for the page to settle, and returns the
+ * fully rendered HTML. Optionally captures a mobile screenshot.
+ */
+export async function renderFetch(url: string, options?: RenderFetchOptions): Promise<FetchResult> {
+  const timeout = options?.timeout ?? 30000;
+  const device = options?.device ?? 'mobile';
+  const wantScreenshot = options?.screenshot ?? false;
+  const waitUntil = options?.waitUntil ?? 'networkidle';
+
+  let browser;
+  const startTime = Date.now();
+
+  try {
+    const pw = await import('playwright');
+    browser = await pw.chromium.launch({
+      headless: true,
+      args: [
+        '--disable-blink-features=AutomationControlled',
+      ],
+    });
+
+    const deviceProfile = device === 'mobile' ? pw.devices['Pixel 7'] : pw.devices['Desktop Chrome'];
+    const contextOptions: Record<string, any> = {
+      ...deviceProfile,
+      ...(options?.headers ? { extraHTTPHeaders: options.headers } : {}),
+    };
+    const context = await browser.newContext(contextOptions);
+    const page = await context.newPage();
+
+    // Hide automation signals from bot detection
+    await context.addInitScript(`Object.defineProperty(navigator, 'webdriver', { get: () => false })`);
+
+    let responseStatus = 0;
+    let responseHeaders: Record<string, string> = {};
+
+    const response = await page.goto(url, {
+      timeout,
+      waitUntil,
+    });
+
+    const ttfbMs = Date.now() - startTime;
+
+    // Extract redirect chain from the main navigation only (not sub-resources).
+    // Walk the redirectedFrom() chain to build the full hop sequence,
+    // matching safeFetch behavior: [intermediate1, intermediate2, ..., finalUrl]
+    const redirectChain: string[] = [];
+    if (response) {
+      const hops: string[] = [];
+      let req = response.request().redirectedFrom();
+      while (req) {
+        hops.unshift(req.url());
+        req = req.redirectedFrom();
+      }
+      // If there were redirects, add intermediate destinations + final URL
+      if (hops.length > 0) {
+        // hops = [original, ...intermediates], add the final landed URL
+        for (let h = 1; h < hops.length; h++) redirectChain.push(hops[h]);
+        redirectChain.push(response.url());
+      }
+      responseStatus = response.status();
+      const rawHeaders = await response.allHeaders();
+      responseHeaders = normalizeHeaders(rawHeaders);
+    }
+
+    // Get the fully rendered HTML
+    const html = await page.content();
+
+    // Capture screenshot if requested (always mobile viewport)
+    let screenshot: Buffer | undefined;
+    if (wantScreenshot) {
+      screenshot = await page.screenshot({ fullPage: false, type: 'png' });
+    }
+
+    const cdnDetected = detectCDN(responseHeaders);
+    const compression = detectCompression(responseHeaders);
+
+    await browser.close();
+
+    return {
+      status: responseStatus,
+      html,
+      headers: responseHeaders,
+      ttfb_ms: ttfbMs,
+      redirect_chain: redirectChain,
+      ...(cdnDetected && { cdnDetected }),
+      ...(compression && { compression }),
+      ...(screenshot && { screenshot }),
+      error: null,
+    };
+  } catch (err) {
+    if (browser) await browser.close().catch(() => {});
+
+    const errObj = err as any;
+    if (errObj?.code === 'ECONNREFUSED' || errObj?.code === 'ENOTFOUND') {
+      throw new NetworkError(url, errObj.message);
+    }
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return {
+      status: 0,
+      html: '',
+      headers: {},
+      ttfb_ms: Date.now() - startTime,
+      redirect_chain: [],
       error: errorMessage,
     };
   }

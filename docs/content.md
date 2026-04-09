@@ -110,7 +110,7 @@ sgnl content https://example.com --exclude-tags ".cookie-banner" ".promo"
 
 ## Pipeline
 
-1. `safeFetch` the URL (captures status, TTFB, headers, redirect chain).
+1. `renderFetch` the URL via headless Chromium (JS rendering, captures status, TTFB, headers, redirect chain).
 2. Cheap raw-HTML word count (strip tags + split) — used for
    `content_to_chrome_ratio`.
 3. `python/split.py` → clean markdown.
