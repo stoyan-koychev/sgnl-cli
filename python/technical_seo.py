@@ -114,11 +114,19 @@ def _analyze_resource_hints(soup: BeautifulSoup, base_url: Optional[str] = None)
     for link in soup.find_all('link', rel=True):
         rel = ' '.join(link.get('rel', []))
         href = link.get('href', '')
+        # Fall back to imagesrcset for preloaded images without href
+        if not href:
+            srcset = link.get('imagesrcset', '')
+            if srcset:
+                # Pick the first URL from the srcset
+                href = srcset.split(',')[0].strip().split()[0]
         # Resolve relative URLs to absolute
         if href and base_url:
             href = urljoin(base_url, href)
 
         if 'preload' in rel:
+            if not href:
+                continue  # Skip preloads with no resolvable URL
             preload.append({'href': href, 'as': link.get('as', '')})
         elif 'prefetch' in rel:
             prefetch.append(href)
