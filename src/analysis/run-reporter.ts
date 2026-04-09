@@ -1169,13 +1169,13 @@ export function buildContentAnalysisMd(data: RunReportData): string {
   lines.push('');
 
   // Top Keywords
-  const topKw: Array<{ word: string; count: number; tfidf?: number }> = ca.top_keywords ?? [];
+  const topKw: Array<{ word: string; count: number; percentage?: number }> = ca.top_keywords ?? [];
   if (topKw.length > 0) {
     lines.push('## Top Keywords', '');
-    lines.push('| Keyword | Count | TF-IDF |');
-    lines.push('|---------|-------|--------|');
+    lines.push('| Keyword | Count | % |');
+    lines.push('|---------|-------|---|');
     for (const kw of topKw) {
-      lines.push(`| ${kw.word} | ${kw.count} | ${kw.tfidf != null ? kw.tfidf.toFixed(3) : 'n/a'} |`);
+      lines.push(`| ${kw.word} | ${kw.count} | ${kw.percentage != null ? kw.percentage + '%' : 'n/a'} |`);
     }
     lines.push('');
   }
@@ -1663,7 +1663,18 @@ export function buildRobotsCheckMd(data: RunReportData): string {
 
 export function buildAssetsMd(data: RunReportData): string {
   const lines: string[] = [`# Assets: ${new URL(data.url).hostname}`, ''];
-  const { images, externalScripts, inlineScripts, stylesheets, preloads } = parseAssets(data.html);
+  const parsed = parseAssets(data.html);
+  const { inlineScripts } = parsed;
+
+  const resolve = (href: string): string => {
+    if (!href || href.startsWith('data:')) return href;
+    try { return new URL(href, data.url).href; } catch { return href; }
+  };
+
+  const images = [...parsed.images].sort((a, b) => resolve(a.src).localeCompare(resolve(b.src)));
+  const externalScripts = [...parsed.externalScripts].sort((a, b) => resolve(a).localeCompare(resolve(b)));
+  const stylesheets = [...parsed.stylesheets].sort((a, b) => resolve(a).localeCompare(resolve(b)));
+  const preloads = [...parsed.preloads].sort((a, b) => resolve(a.href).localeCompare(resolve(b.href)));
 
   // Images
   lines.push(`## Images (${images.length})`, '');
@@ -1671,7 +1682,7 @@ export function buildAssetsMd(data: RunReportData): string {
     lines.push('| src | alt |');
     lines.push('|-----|-----|');
     for (const img of images) {
-      lines.push(`| ${img.src || '(none)'} | ${img.alt || '(none)'} |`);
+      lines.push(`| ${resolve(img.src) || '(none)'} | ${img.alt || '(none)'} |`);
     }
   } else {
     lines.push('_None found._');
@@ -1686,7 +1697,7 @@ export function buildAssetsMd(data: RunReportData): string {
     lines.push('| src |');
     lines.push('|-----|');
     for (const src of externalScripts) {
-      lines.push(`| ${src} |`);
+      lines.push(`| ${resolve(src)} |`);
     }
   } else {
     lines.push('_No external scripts found._');
@@ -1699,7 +1710,7 @@ export function buildAssetsMd(data: RunReportData): string {
     lines.push('| href |');
     lines.push('|------|');
     for (const href of stylesheets) {
-      lines.push(`| ${href} |`);
+      lines.push(`| ${resolve(href)} |`);
     }
   } else {
     lines.push('_None found._');
@@ -1712,7 +1723,7 @@ export function buildAssetsMd(data: RunReportData): string {
     lines.push('| href | as |');
     lines.push('|------|----|');
     for (const p of preloads) {
-      lines.push(`| ${p.href} | ${p.extra ?? ''} |`);
+      lines.push(`| ${resolve(p.href)} | ${p.extra ?? ''} |`);
     }
   } else {
     lines.push('_None found._');
