@@ -104,7 +104,7 @@ def _analyze_caching(headers: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def _analyze_resource_hints(soup: BeautifulSoup) -> Dict[str, Any]:
+def _analyze_resource_hints(soup: BeautifulSoup, base_url: Optional[str] = None) -> Dict[str, Any]:
     """Analyze resource hints: preload, prefetch, dns-prefetch, preconnect."""
     preload = []
     prefetch = []
@@ -114,6 +114,9 @@ def _analyze_resource_hints(soup: BeautifulSoup) -> Dict[str, Any]:
     for link in soup.find_all('link', rel=True):
         rel = ' '.join(link.get('rel', []))
         href = link.get('href', '')
+        # Resolve relative URLs to absolute
+        if href and base_url:
+            href = urljoin(base_url, href)
 
         if 'preload' in rel:
             preload.append({'href': href, 'as': link.get('as', '')})
@@ -177,7 +180,7 @@ def analyze_technical_seo(html: str, headers: Optional[Dict[str, str]] = None, u
         caching = _analyze_caching(headers)
 
         # Resource hints
-        resource_hints = _analyze_resource_hints(soup)
+        resource_hints = _analyze_resource_hints(soup, url)
 
         result: Dict[str, Any] = {
             "meta": meta_analysis,
