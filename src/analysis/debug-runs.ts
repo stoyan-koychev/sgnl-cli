@@ -170,7 +170,7 @@ function buildMetadataMd(data: DebugRunData): string {
 
   // Open Graph
   const og = t.open_graph ?? {};
-  const ogEntries = Object.entries(og).filter(([, v]) => v);
+  const ogEntries = Object.entries(og).filter(([, v]) => v && typeof v !== 'object');
   if (ogEntries.length > 0) {
     lines.push('## Open Graph', '');
     lines.push('| Property | Value |');
